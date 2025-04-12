@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->date('dob')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->enum('user_type', ['student', 'tutor']);
+            $table->enum('user_type', ['student', 'tutor',"admin"]);
             $table->text('present_address')->nullable();
             $table->text('permanent_address')->nullable();
             $table->string('profile_photo')->nullable();

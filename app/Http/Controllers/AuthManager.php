@@ -26,7 +26,13 @@ class AuthManager extends Controller
     }
 
     function tutor(){
-        return view('tutor');
+        $tutor = Auth::user();
+        return view('tutor.dashboard.index',compact('tutor'));
+    }
+
+    function admin(){
+        $admin = Auth::user();
+        return view('admin',compact('admin'));
     }
 
     function loginPost(Request $request){
@@ -44,7 +50,10 @@ class AuthManager extends Controller
                 return redirect()->intended(route('student')); // change route name as needed
             } elseif ($user->user_type === 'tutor') {
                 return redirect()->intended(route('tutor')); // change route name as needed
-            } else {
+            } elseif ($user->user_type === 'admin') {
+                return redirect()->intended(route('admin')); // change route name as needed
+            } 
+            else {
                 Auth::logout();
                 return redirect(route('login'))->with("error", "User type not recognized.");
             }
