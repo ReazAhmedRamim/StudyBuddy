@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class TutorProfileController extends Controller
 {
@@ -14,6 +15,7 @@ class TutorProfileController extends Controller
     {
         return view('tutor.profile.setting');
     }
+
 
 
     public function update(Request $request)

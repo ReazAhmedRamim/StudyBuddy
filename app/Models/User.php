@@ -66,4 +66,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function unreadMessages()
+    {
+        return $this->hasMany(Message::class,'sender_id','id')->where('is_read',false);
+    }
 }

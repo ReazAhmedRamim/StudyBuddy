@@ -20,6 +20,24 @@
 
         </li>
 
+        <li>
+            <a href="{{route('tutor.chatbox')}}">
+                <div class="parent-icon"><i class='bx bx-category'></i>
+                </div>
+                <div class="menu-title">Chatbox</div>
+            </a> 
+
+        </li>
+
+        <li>
+            <a href="{{route('tutor.chatbox')}}">
+                <div class="parent-icon"><i class='bx bx-category'></i>
+                </div>
+                <div class="menu-title">Quiz Question</div>
+            </a> 
+
+        </li>
+
         @if(isApprovedUser())
 
        

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthManager;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\TutorProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\backend\TutorController;
@@ -40,4 +41,9 @@ Route::prefix('tutor')
 Route::put('/tutor/profile/update', [TutorProfileController::class, 'update'])->name('tutor.profile.update');
 Route::post('/tutor/password/update', [TutorProfileController::class, 'updatePassword'])->name('tutor.passwordSetting');
 Route::get('/tutor/settings', [TutorProfileController::class, 'settings'])->name('tutor.profile.setting');
+
+Route::controller(UserController::class)->group(function(){
+    Route::get('/tutor/chatbox','chatbox')->name('tutor.chatbox');
+    Route::get('chat/{id}','userChat')->name('chat');
+});
 
