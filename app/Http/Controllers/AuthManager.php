@@ -22,7 +22,8 @@ class AuthManager extends Controller
     }
 
     function student(){
-        return view('student');
+        $student = Auth::user();
+        return view('student.dashboard.index',compact('student'));
     }
 
     function tutor(){
@@ -32,7 +33,7 @@ class AuthManager extends Controller
 
     function admin(){
         $admin = Auth::user();
-        return view('admin',compact('admin'));
+        return view('admin.dashboard.index',compact('admin'));
     }
 
     function loginPost(Request $request){

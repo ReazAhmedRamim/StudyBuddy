@@ -1,16 +1,16 @@
-@extends('tutor.master')
+@extends('student.master')
 
 @section('content')
 
 <div class="page-content">
     <!-- Breadcrumb -->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Tutor Profile</div>
+        <div class="breadcrumb-title pe-3">student Profile</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item"><a href="#"><i class="bx bx-home-alt"></i></a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Tutor Profile</li>
+                    <li class="breadcrumb-item active" aria-current="page">student Profile</li>
                 </ol>
             </nav>
         </div>
@@ -20,12 +20,12 @@
     <div class="container">
         <div class="main-body">
             <div class="row">
-                @include('tutor.sidebar')
+                @include('student.sidebar')
 
                 <div class="col-lg-8">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h4 class="card-title mb-4">List of Students</h4>
+                            <h4 class="card-title mb-4">List of Tutors</h4>
 
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover align-middle mb-0">

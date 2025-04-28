@@ -9,13 +9,22 @@ class UserController extends Controller
 {
     public function chatbox()
     {
-        $users = User::query()
-        ->where('id', '!=', Auth::id())          // exclude yourself
-        ->where('user_type', 'tutor')             // only tutors
+        $users = User::query()        // exclude yourself
+        ->where('user_type', 'student')             // only tutors
         ->withCount('unreadMessages')             // eager‑load unread count
         ->get();
 
     return view('tutor.chatbox.index', compact('users'));
+    }
+
+    public function chatbox_student()
+    {
+        $users = User::query()        // exclude yourself
+        ->where('user_type', 'tutor')             // only tutors
+        ->withCount('unreadMessages')             // eager‑load unread count
+        ->get();
+
+    return view('student.chatbox.index', compact('users'));
     }
 
     public function userChat($userId)
