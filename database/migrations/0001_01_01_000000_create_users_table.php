@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('specialization')->nullable();
             $table->string('teaching_mode')->nullable();
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
 

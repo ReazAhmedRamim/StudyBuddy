@@ -60,11 +60,13 @@ Route::get('/tutor/settings', [TutorProfileController::class, 'settings'])->name
 Route::prefix('student')
 ->name('student.')
 ->group(function () {
-    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
-    Route::post('/logout', [StudentController::class, 'destroy'])->name('logout');
+    Route::get('/dashboard', [\App\Http\Controllers\backend\StudentController::class, 'dashboard'])->name('dashboard');
+    Route::post('/logout', [\App\Http\Controllers\backend\StudentController::class, 'destroy'])->name('logout');
 
     Route::get('/profile', [profile::class, 'index'])->name('profile');
     Route::get('/setting', [StudentSettingController::class, 'index'])->name('setting'); //apadoto kaaj dekhtesi nah?
+
+    Route::post('/enroll', [\App\Http\Controllers\backend\StudentController::class, 'enroll'])->name('enroll');
 });
 
 Route::put('/student/profile/update', [StudentProfileController::class, 'update'])->name('student.profile.update');

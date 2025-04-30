@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Course;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
+
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,6 +15,9 @@ use function Pest\Laravel\session;
 
 class AuthManager extends Controller
 {
+    //use App\Models\Course;
+    //use Illuminate\Support\Facades\Auth;
+
     function login(){
         return view('login');
     }
@@ -23,7 +28,9 @@ class AuthManager extends Controller
 
     function student(){
         $student = Auth::user();
-        return view('student.dashboard.index',compact('student'));
+        $courses = Course::all();
+        $enrolledCourseIds = $student->courses()->pluck('courses.id')->toArray();
+        return view('student.dashboard.index',compact('student', 'courses', 'enrolledCourseIds'));
     }
 
     function tutor(){
