@@ -10,12 +10,12 @@ class CreateQuizzesTable extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->increments('quiz_id');
-            $table->unsignedInteger('course_id');
+            $table->unsignedBigInteger('course_id');
             $table->string('title', 255);
             $table->text('description')->nullable();
             $table->timestamps();
 
-            $table->foreign('course_id')->references('course_id')->on('courses')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

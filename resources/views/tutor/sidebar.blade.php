@@ -38,10 +38,7 @@
 
         </li>
 
-        @if(isApprovedUser())
-
-       
-
+        {{-- Removed approval check to always show Schedule link --}}
         <li class="{{ setSidebar(['tutor.course*', 'tutor.course-section*']) }}">
             <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon"><i class="bx bx-category"></i>
@@ -49,14 +46,17 @@
                 <div class="menu-title">Manage Courses</div>
             </a>
             <ul>
-                <li class="{{ setSidebar(['tutor.course*', 'tutor.course-section']) }}">
-                    <a href="{{route('tutor.course.index')}}"><i class='bx bx-radio-circle'></i>All Course</a>
+                <li class="{{ setSidebar(['tutor.courses']) }}">
+                    <a href="{{route('tutor.courses')}}"><i class='bx bx-radio-circle'></i>All Course</a>
                 </li>
-
+                <li>
+                    <a href="{{ route('tutor.courses') }}"><i class='bx bx-radio-circle'></i>My Courses</a>
+                </li>
+                <li>
+                    <a href="{{ route('tutor.schedule') }}"><i class='bx bx-radio-circle'></i>Schedule</a>
+                </li>
             </ul>
         </li>
-
-        @endif
 
 
     </ul>

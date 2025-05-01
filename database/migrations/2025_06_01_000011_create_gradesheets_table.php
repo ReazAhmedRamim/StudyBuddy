@@ -10,13 +10,13 @@ class CreateGradesheetsTable extends Migration
     {
         Schema::create('gradesheets', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('student_id');
-            $table->unsignedInteger('course_id');
+            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('course_id');
             $table->integer('total_marks')->default(0);
             $table->timestamps();
 
-            $table->foreign('student_id')->references('user_id')->on('users')->onDelete('cascade');
-            $table->foreign('course_id')->references('course_id')->on('courses')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

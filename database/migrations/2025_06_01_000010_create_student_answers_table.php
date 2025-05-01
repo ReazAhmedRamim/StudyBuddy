@@ -10,12 +10,12 @@ class CreateStudentAnswersTable extends Migration
     {
         Schema::create('student_answers', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('student_id');
+            $table->unsignedBigInteger('student_id');
             $table->unsignedInteger('question_id');
             $table->unsignedInteger('selected_option_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('student_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('question_id')->references('question_id')->on('questions')->onDelete('cascade');
             $table->foreign('selected_option_id')->references('option_id')->on('options')->onDelete('set null');
         });

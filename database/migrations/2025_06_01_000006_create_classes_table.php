@@ -6,21 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateClassesTable extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('classes', function (Blueprint $table) {
-            $table->increments('class_id');
-            $table->unsignedInteger('course_id');
-            $table->string('class_title', 150);
+            $table->bigIncrements('class_id');
+            $table->unsignedBigInteger('course_id');
+            $table->string('class_title');
             $table->dateTime('scheduled_time');
-            $table->integer('duration')->nullable();
+            $table->integer('duration');
             $table->text('details')->nullable();
+            // No timestamps as per model
 
-            $table->foreign('course_id')->references('course_id')->on('courses')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('classes');
     }

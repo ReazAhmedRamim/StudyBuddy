@@ -49,7 +49,13 @@ Route::prefix('tutor')
 
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::get('/setting', [SettingController::class, 'index'])->name('setting'); //apadoto kaaj dekhtesi nah?
+
+        Route::get('/courses', [\App\Http\Controllers\TutorCoursesController::class, 'index'])->name('courses');
+        Route::put('/quiz/{quiz}/update', [\App\Http\Controllers\TutorCoursesController::class, 'editQuizDate'])->name('quiz.update');
+
+        Route::get('/schedule', [\App\Http\Controllers\TutorCoursesController::class, 'schedule'])->name('schedule');
     });
+
 
 Route::put('/tutor/profile/update', [TutorProfileController::class, 'update'])->name('tutor.profile.update');
 Route::post('/tutor/password/update', [TutorProfileController::class, 'updatePassword'])->name('tutor.passwordSetting');
@@ -67,6 +73,10 @@ Route::prefix('student')
     Route::get('/setting', [StudentSettingController::class, 'index'])->name('setting'); //apadoto kaaj dekhtesi nah?
 
     Route::post('/enroll', [\App\Http\Controllers\backend\StudentController::class, 'enroll'])->name('enroll');
+
+    Route::get('/courses', [\App\Http\Controllers\StudentCoursesController::class, 'index'])->name('courses');
+
+    Route::get('/schedule', [\App\Http\Controllers\StudentCoursesController::class, 'schedule'])->name('schedule');
 });
 
 Route::put('/student/profile/update', [StudentProfileController::class, 'update'])->name('student.profile.update');

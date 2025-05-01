@@ -10,12 +10,12 @@ class CreateQuizResultsTable extends Migration
     {
         Schema::create('quiz_results', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('student_id');
+            $table->unsignedBigInteger('student_id');
             $table->unsignedInteger('quiz_id');
             $table->integer('marks_obtained')->default(0);
             $table->timestamps();
 
-            $table->foreign('student_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('quiz_id')->references('quiz_id')->on('quizzes')->onDelete('cascade');
         });
     }
