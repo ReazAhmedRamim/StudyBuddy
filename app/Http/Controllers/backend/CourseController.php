@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Course;
+use App\Models\Category;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,7 +31,9 @@ class CourseController extends Controller
      */
     public function create()
     {
-        //
+        $all_categories = Category::all(); // fetch all categories
+
+        return view('tutor.course.create', compact('all_categories'));
     }
 
     /**
