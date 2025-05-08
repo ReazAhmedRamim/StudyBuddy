@@ -7,6 +7,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\backend\TutorController;
 use App\Http\Controllers\Tutor\ProfileController;
 use App\Http\Controllers\Tutor\SettingController;
+use App\Http\Controllers\backend\CourseController;
+
+
+Route::prefix('tutor')->name('tutor.')->group(function() {
+    Route::resource('course', \App\Http\Controllers\backend\CourseController::class);
+});
+
+// For resource controller
+Route::prefix('tutor')->name('tutor.')->group(function() {
+    Route::resource('course', \App\Http\Controllers\backend\CourseController::class);
+});
+
+
 
 
 use App\Http\Controllers\StudentProfileController;
@@ -39,13 +52,18 @@ Route::get('/adminProfile',[AuthManager::class,'admin'])->name('admin') ;
 
 Route::get('/tutorProfile',[AuthManager::class,'tutor'])->name('tutor') ;
 
+
 // for tutor 
+
+Route::resource('/course', CourseController::class);
+
+
 
 Route::prefix('tutor')
     ->name('tutor.')
     ->group(function () {
-        Route::get('/dashboard', [tutorController::class, 'dashboard'])->name('dashboard');
-        Route::post('/logout', [tutorController::class, 'destroy'])->name('logout');
+        Route::get('/dashboard', [TutorController::class, 'dashboard'])->name('dashboard');
+        Route::post('/logout', [TutorController::class, 'destroy'])->name('logout');
 
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::get('/setting', [SettingController::class, 'index'])->name('setting'); //apadoto kaaj dekhtesi nah?
