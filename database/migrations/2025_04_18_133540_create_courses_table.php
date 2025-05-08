@@ -28,8 +28,7 @@ return new class extends Migration
             $table->string('resources')->nullable();
             $table->string('certificate')->nullable();
 
-            $table->json('course_goals')->nullable();
-
+            $table->decimal('duration', 8, 2)->nullable();
 
 
             $table->integer('selling_price')->nullable();
@@ -49,6 +48,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('courses');
-        
     }
 };
