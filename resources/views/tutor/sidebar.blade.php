@@ -11,7 +11,7 @@
     </div>
     <!--navigation-->
     
-
+   
     <ul class="metismenu" id="menu">
         <!-- Dashboard -->
         <li>
@@ -30,8 +30,7 @@
                 <div class="menu-title">Chatbox</div>
             </a>
         </li>
-
-        @if(isApprovedUser())
+        @if(true)
         <!-- Manage Courses Dropdown -->
         <li class="{{ setSidebarActive(['tutor.course.*']) ? 'bg-blue-50' : '' }}">
             <a href="javascript:;" 
@@ -48,8 +47,7 @@
                 </li>
             </ul>
         </li>
+        
         @endif
     </ul>
 </div>
- 
-   
