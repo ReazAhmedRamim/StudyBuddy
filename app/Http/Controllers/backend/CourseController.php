@@ -26,6 +26,15 @@ class CourseController extends Controller
         return view('tutor.course.index',compact('all_courses'));
     }
 
+    // public function index()
+    // {
+    //     $tutor_id = auth()->user()->id;
+    //     $all_courses = Course::where('tutor_id', $tutor_id)
+    //                     ->with('category', 'subCategory')
+    //                     ->get();
+    //     return view('tutor.course.index', compact('all_courses'));
+    // }
+
     /**
      * Show the form for creating a new resource.
      */
