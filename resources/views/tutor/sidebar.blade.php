@@ -11,7 +11,7 @@
     </div>
     <!--navigation-->
     
-
+   
     <ul class="metismenu" id="menu">
         <!-- Dashboard -->
         <li>
@@ -31,6 +31,7 @@
             </a>
         </li>
 
+        @if(isApprovedUser())
         <!-- Manage Courses Dropdown -->
         <li class="{{ setSidebarActive(['tutor.course.*']) ? 'bg-blue-50' : '' }}">
             <a href="javascript:;" 
@@ -47,15 +48,8 @@
                 </li>
             </ul>
         </li>
-
-        <!-- Schedule Link -->
-        <li>
-            <a href="{{ route('tutor.schedule') }}"
-               class="flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ setSidebarActive(['tutor.schedule']) }}">
-                <div class="parent-icon"><i class='bx bx-calendar'></i></div>
-                <div class="menu-title">Schedule</div>
-            </a>
-        </li>
-
+        @endif
     </ul>
 </div>
+ 
+   

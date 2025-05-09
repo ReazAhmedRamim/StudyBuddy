@@ -9,9 +9,20 @@ use App\Http\Controllers\Tutor\ProfileController;
 use App\Http\Controllers\Tutor\SettingController;
 use App\Http\Controllers\backend\CourseController;
 
+use App\Http\Controllers\CKEditorController;
+
 
 Route::prefix('tutor')->name('tutor.')->group(function() {
     Route::resource('course', \App\Http\Controllers\backend\CourseController::class);
+});
+
+// Inside your tutor route group
+Route::prefix('tutor')->group(function () {
+    // ... other routes
+    
+    // Add this course section route
+    Route::get('/course-section/{course}', [CourseSectionController::class, 'show'])
+         ->name('tutor.course-section.show');
 });
 
 // For resource controller
@@ -19,6 +30,7 @@ Route::prefix('tutor')->name('tutor.')->group(function() {
     Route::resource('course', \App\Http\Controllers\backend\CourseController::class);
 });
 
+Route::post('/ckeditor/upload', [CKEditorController::class, 'upload'])->name('ckeditor.upload');
 
 
 
@@ -68,7 +80,6 @@ Route::prefix('tutor')
 
         Route::get('/schedule', [\App\Http\Controllers\TutorCoursesController::class, 'schedule'])->name('schedule');
     });
-
 
 Route::put('/tutor/profile/update', [TutorProfileController::class, 'update'])->name('tutor.profile.update');
 Route::post('/tutor/password/update', [TutorProfileController::class, 'updatePassword'])->name('tutor.passwordSetting');
