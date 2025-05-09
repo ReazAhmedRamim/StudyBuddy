@@ -2,78 +2,85 @@
 
 namespace App\Services;
 
-use App\Repositories\CourseRepository;
 use App\Models\Course;
 use Illuminate\Support\Facades\Storage;
 
 class CourseService
 {
-    protected $courseRepository;
-
-    public function __construct(CourseRepository $courseRepository)
+    public function createCourse(array $data, $image = null): Course
     {
-        $this->courseRepository = $courseRepository;
-    }
-
-    public function createCourse(array $data, $image = null)
-    {
-        // Handle image upload
         if ($image) {
-            $path = $image->store('public/course_images');
-            $data['image'] = Storage::url($path);
+            $imagePath = $image->store('course_images', 'public');
+            $data['course_image'] = $imagePath;
         }
 
-        // Convert array fields to JSON
-        $data = $this->prepareArrayFields($data);
+        $course = Course::create([
+            'course_code' => $data['course_code'],
+            'class_timing' => $data['class_timing'],
+            'title' => $data['title'] ?? null,
+            'description' => $data['description'] ?? null,
+            //'video_url' => $data['video_url'] ?? null,
+            //'label' => $data['label'] ?? null,
+            //'resources' => $data['resources'] ?? null,
+            //'certificate' => $data['certificate'] ?? null,
+            //'selling_price' => $data['selling_price'] ?? null,
+            //'discount_price' => $data['discount_price'] ?? null,
+            //'prerequisites' => $data['prerequisites'] ?? null,
+            //'bestseller' => $data['bestseller'] ?? 'no',
+            //'featured' => $data['featured'] ?? 'no',
+            //'highestrated' => $data['highestrated'] ?? 'no',
+            'tutor_id' => $data['tutor_id'] ?? null,
+        ]);
 
-        // Ensure tutor_id is set
-        $data['tutor_id'] = $data['tutor_id'] ?? auth()->id();
-
-        return Course::create($data);
+        return $course;
     }
 
-    public function updateCourse(array $data, $image = null, $id)
+    public function updateCourse(array $data, $image = null, int $id): Course
     {
         $course = Course::findOrFail($id);
 
-        // Handle image upload
         if ($image) {
             // Delete old image if exists
-            if ($course->image) {
-                $oldImagePath = str_replace('storage', 'public', $course->image);
-                Storage::delete($oldImagePath);
+            if ($course->course_image && Storage::disk('public')->exists($course->course_image)) {
+                Storage::disk('public')->delete($course->course_image);
             }
-
-            $path = $image->store('public/course_images');
-            $data['image'] = Storage::url($path);
+            $imagePath = $image->store('course_images', 'public');
+            $data['course_image'] = $imagePath;
         }
 
-        // Convert array fields to JSON
-        $data = $this->prepareArrayFields($data);
+        $course->update([
+            'course_code' => $data['course_code'],
+            'class_timing' => $data['class_timing'],
+            'title' => $data['title'] ?? $course->title,
+            'description' => $data['description'] ?? $course->description,
+            //'video_url' => $data['video_url'] ?? $course->video_url,
+            //'label' => $data['label'] ?? $course->label,
+            //'resources' => $data['resources'] ?? $course->resources,
+            //'certificate' => $data['certificate'] ?? $course->certificate,
+            //'selling_price' => $data['selling_price'] ?? $course->selling_price,
+            //'discount_price' => $data['discount_price'] ?? $course->discount_price,
+            //'prerequisites' => $data['prerequisites'] ?? $course->prerequisites,
+            //'bestseller' => $data['bestseller'] ?? $course->bestseller,
+            //'featured' => $data['featured'] ?? $course->featured,
+            //'highestrated' => $data['highestrated'] ?? $course->highestrated,
+            'tutor_id' => $data['tutor_id'] ?? $course->tutor_id,
+        ]);
 
-        return $this->courseRepository->updateCourse($data, $id);
+        return $course;
     }
 
-    protected function prepareArrayFields(array $data): array
+    public function createCourseGoals(int $courseId, array $goals): void
     {
-        if (isset($data['course_goals']) && is_array($data['course_goals'])) {
-            $data['course_goals'] = json_encode($data['course_goals']);
+        $course = Course::findOrFail($courseId);
+        $course->goals()->delete();
+
+        foreach ($goals as $goal) {
+            $course->goals()->create(['goal_name' => $goal]);
         }
-
-        if (isset($data['prerequisites']) && is_array($data['prerequisites'])) {
-            $data['prerequisites'] = json_encode($data['prerequisites']);
-        }
-
-        return $data;
     }
 
-    public function createCourseGoals($courseId, array $goals)
+    public function updateCourseGoals(int $courseId, array $goals): void
     {
-        return $this->courseRepository->createCourseGoals($courseId, $goals);
-    }
-
-    public function updateCourseGoals($courseId, array $goals)
-    {
-        return $this->courseRepository->updateCourseGoals($courseId, $goals);
+        $this->createCourseGoals($courseId, $goals);
     }
 }

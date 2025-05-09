@@ -31,11 +31,10 @@
             </a>
         </li>
 
-        @if(isApprovedUser())
         <!-- Manage Courses Dropdown -->
-        <li class="{{ setSidebarActive(['tutor.course.*']) ? 'bg-blue-50' : '' }}">
+        <li class="{{ setSidebarActive(['tutor.course.*', 'tutor.courses']) ? 'bg-blue-50' : '' }}">
             <a href="javascript:;" 
-               class="has-arrow flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ setSidebarActive(['tutor.course.*']) ? 'text-blue-600' : '' }}">
+               class="has-arrow flex items-center px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ setSidebarActive(['tutor.course.*', 'tutor.courses']) ? 'text-blue-600' : '' }}">
                 <div class="parent-icon"><i class='bx bx-book'></i></div>
                 <div class="menu-title">Manage Courses</div>
             </a>
@@ -46,9 +45,14 @@
                         <i class='bx bx-radio-circle mr-2'></i>All Courses
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('tutor.courses') }}"
+                       class="flex items-center px-4 py-2 pl-12 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ setSidebarActive(['tutor.courses']) }}">
+                        <i class='bx bx-radio-circle mr-2'></i>My Courses
+                    </a>
+                </li>
             </ul>
         </li>
-        @endif
     </ul>
 </div>
  

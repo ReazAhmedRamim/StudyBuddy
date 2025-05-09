@@ -15,15 +15,50 @@ class TutorCoursesController extends Controller
         $tutor = Auth::user();
 
         // Get courses the tutor is teaching
-        $courses = Course::where('instructor', $tutor->name)->with(['classes', 'quizzes'])->get();
+        $courses = Course::where('tutor_id', $tutor->id)->with(['classes', 'quizzes'])->get();
 
         // For each course, get classes and quizzes
         foreach ($courses as $course) {
-            $course->classes = CourseClass::where('course_id', $course->course_id)->get();
-            $course->quizzes = Quiz::where('course_id', $course->course_id)->get();
+            $course->classes = CourseClass::where('course_id', $course->id)->get();
+            $course->quizzes = Quiz::where('course_id', $course->id)->get();
         }
 
         return view('tutor.courses.index', compact('courses'));
+    }
+
+    public function uploadQuizQuestions($courseId)
+    {
+        $course = Course::findOrFail($courseId);
+
+        return view('tutor.courses.upload_quiz', compact('course'));
+    }
+
+    public function storeQuiz(Request $request, $courseId)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'quiz_file' => 'required|file|mimes:pdf,doc,docx,txt',
+        ]);
+
+        $course = Course::findOrFail($courseId);
+
+        $quiz = new \App\Models\Quiz();
+        $quiz->course_id = $course->id;
+        $quiz->title = $request->input('title');
+        $quiz->description = $request->input('description');
+
+        // Handle file upload
+        if ($request->hasFile('quiz_file')) {
+            $file = $request->file('quiz_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/quizzes'), $filename);
+            $quiz->file_path = 'uploads/quizzes/' . $filename;
+        }
+
+        $quiz->save();
+
+        return redirect()->route('tutor.courses')->with('success', 'Quiz uploaded successfully.');
     }
 
     public function editQuizDate(Request $request, $quizId)
@@ -48,7 +83,7 @@ class TutorCoursesController extends Controller
     {
         $tutor = Auth::user();
 
-        $courses = Course::where('instructor', $tutor->name)->with(['classes', 'quizzes'])->get();
+        $courses = Course::where('tutor_id', $tutor->id)->with(['classes', 'quizzes'])->get();
 
         return view('tutor.schedule.index', compact('courses'));
     }

@@ -39,11 +39,11 @@
                 <div class="menu-title">Manage Courses</div>
             </a>
             <ul>
-                <li class="{{ setSidebar(['student.courses']) }}">
-                    <a href="{{route('student.courses')}}"><i class='bx bx-radio-circle'></i>All Course</a>
+                <li class="{{ setSidebar(['student.courses.index']) }}">
+                    <a href="{{route('student.courses.index')}}"><i class='bx bx-radio-circle'></i>All Course</a>
                 </li>
                 <li>
-                    <a href="{{ route('student.courses') }}"><i class='bx bx-radio-circle'></i>My Courses</a>
+                    <a href="{{ route('student.courses.my') }}"><i class='bx bx-radio-circle'></i>My Courses</a>
                 </li>
                 <li>
                     <a href="{{ route('student.schedule') }}"><i class='bx bx-radio-circle'></i>Schedule</a>

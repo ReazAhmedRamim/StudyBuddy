@@ -21,8 +21,8 @@ Route::prefix('tutor')->group(function () {
     // ... other routes
     
     // Add this course section route
-    Route::get('/course-section/{course}', [CourseSectionController::class, 'show'])
-         ->name('tutor.course-section.show');
+    // Route::get('/course-section/{course}', [CourseSectionController::class, 'show'])
+    //      ->name('tutor.course-section.show');
 });
 
 // For resource controller
@@ -79,6 +79,8 @@ Route::prefix('tutor')
         Route::put('/quiz/{quiz}/update', [\App\Http\Controllers\TutorCoursesController::class, 'editQuizDate'])->name('quiz.update');
 
         Route::get('/schedule', [\App\Http\Controllers\TutorCoursesController::class, 'schedule'])->name('schedule');
+
+        Route::get('/course/{course}/upload-quiz', [\App\Http\Controllers\TutorCoursesController::class, 'uploadQuizQuestions'])->name('quiz.upload');
     });
 
 Route::put('/tutor/profile/update', [TutorProfileController::class, 'update'])->name('tutor.profile.update');
@@ -86,6 +88,14 @@ Route::post('/tutor/password/update', [TutorProfileController::class, 'updatePas
 Route::get('/tutor/settings', [TutorProfileController::class, 'settings'])->name('tutor.profile.setting');
 
 // for student 
+
+use App\Http\Controllers\StudentCoursesController;
+
+Route::prefix('student/courses')->name('student.courses.')->group(function () {
+    Route::get('/', [StudentCoursesController::class, 'index'])->name('index');
+    Route::post('/enroll', [StudentCoursesController::class, 'enroll'])->name('enroll');
+    Route::get('/my', [StudentCoursesController::class, 'myCourses'])->name('my');
+});
 
 Route::prefix('student')
 ->name('student.')
@@ -96,10 +106,7 @@ Route::prefix('student')
     Route::get('/profile', [profile::class, 'index'])->name('profile');
     Route::get('/setting', [StudentSettingController::class, 'index'])->name('setting'); //apadoto kaaj dekhtesi nah?
 
-    Route::post('/enroll', [\App\Http\Controllers\backend\StudentController::class, 'enroll'])->name('enroll');
-
-    Route::get('/courses', [\App\Http\Controllers\StudentCoursesController::class, 'index'])->name('courses');
-
+    Route::get('/schedule', [\App\Http\Controllers\StudentCoursesController::class, 'schedule'])->name('student.courses.schedule');
     Route::get('/schedule', [\App\Http\Controllers\StudentCoursesController::class, 'schedule'])->name('schedule');
 });
 

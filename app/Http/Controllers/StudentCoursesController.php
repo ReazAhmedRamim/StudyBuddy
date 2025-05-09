@@ -3,34 +3,44 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
-use App\Models\CourseClass;
-use App\Models\Quiz;
+use Illuminate\Support\Facades\Auth;
 
 class StudentCoursesController extends Controller
 {
     public function index()
     {
-        $student = Auth::user();
+        $courses = Course::all();
+        $enrolledCourseIds = Auth::user()->courses()->pluck('courses.id')->toArray();
 
-        // Get courses the student is enrolled in
-        $courses = $student->courses()->with(['classes', 'quizzes'])->get();
+        return view('student.courses.index', compact('courses', 'enrolledCourseIds'));
+    }
 
-        // For each course, get quizzes (classes are eager loaded)
-        foreach ($courses as $course) {
-            $course->quizzes = Quiz::where('course_id', $course->course_id)->get();
-        }
+    public function enroll(Request $request)
+    {
+        $request->validate([
+            'course_ids' => 'required|array',
+            'course_ids.*' => 'exists:courses,id',
+        ]);
 
-        return view('student.courses.index', compact('courses'));
+        $user = Auth::user();
+        $user->courses()->syncWithoutDetaching($request->course_ids);
+
+        return redirect()->route('student.courses.index')->with('success', 'Enrolled in selected courses successfully.');
     }
 
     public function schedule()
     {
-        $student = Auth::user();
-
-        $courses = $student->courses()->with(['classes', 'quizzes'])->get();
+        $user = Auth::user();
+        $courses = $user->courses()->with(['classes', 'quizzes'])->get();
 
         return view('student.schedule.index', compact('courses'));
+    }
+
+    public function myCourses()
+    {
+        $user = Auth::user();
+        $courses = $user->courses()->get();
+        return view('student.courses.my', compact('courses'));
     }
 }

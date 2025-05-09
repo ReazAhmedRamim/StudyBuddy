@@ -51,9 +51,14 @@
 
 
                         <div class="col-md-6">
-                            <label for="name" class="form-label">Course Name</label>
-                            <input type="text" class="form-control" name="course_name" id="name"
-                                placeholder="Enter the course name" value="{{ old('course_name') }}" required>
+                            <label for="course_code" class="form-label">Course Code</label>
+                            <input type="text" class="form-control" name="course_code" id="course_code"
+                                placeholder="Enter the course code" value="{{ old('course_code') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="class_timing" class="form-label">Class Timing</label>
+                            <input type="text" class="form-control" name="class_timing" id="class_timing"
+                                placeholder="e.g. Mon-Wed 11:00 am" value="{{ old('class_timing') }}" required>
                         </div>
                         <div class="col-md-6">
                             <label for="slug" class="form-label">Slug</label>
@@ -62,9 +67,9 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label for="course_title" class="form-label">Course Title</label>
-                            <input type="text" class="form-control" name="course_title" id="course_title"
-                                placeholder="Enter the course title" value="{{ old('course_title') }}" required>
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" id="title"
+                                placeholder="Enter the title" value="{{ old('title') }}" required>
                         </div>
 
 
@@ -81,11 +86,7 @@
 
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="resources" class="form-label">Resources</label>
-                            <input class="form-control" type="number" name="resources" id="resources"
-                                placeholder="Enter the Number of Download Resorce" value="{{ old('resources') }}" />
-                        </div>
+                        {{-- Removed Resources input field as it does not exist in the database schema --}}
 
 
 
@@ -94,59 +95,21 @@
                             <textarea class="form-control editor" name="description" id="description" required> {{ old('description') }} </textarea>
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="video_url" class="form-label">YouTube Video URL</label>
-                            <input type="url" class="form-control" name="video_url" id="video_url"
-                                placeholder="Enter the YouTube video URL" value="{{ old('video_url') }}" required>
-                            <iframe id="videoPreview" style="margin-top: 15px; display: none; width: 100%; height: 400px;"
-                                frameborder="0" allowfullscreen></iframe>
-                        </div>
+                        {{-- Removed YouTube Video URL input field as it does not exist in the database schema --}}
 
 
-                        <div class="col-md-6">
-                            <label for="label" class="form-label">Course Label</label>
-                            <select class="form-select" name="label" id="label"
-                                data-placeholder="Choose one thing">
+                        {{-- Removed Course Label select field as it does not exist in the database schema --}}
 
-                                <option selected disabled>select</option>
-
-                                <option value="beginer">Beginer</option>
-                                <option value="medium">Medium</option>
-                                <option value="advance">Advance</option>
-
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="certificate" class="form-label">Certificate</label>
-                            <select class="form-select" name="certificate" id="certificate"
-                                data-placeholder="Choose one thing">
-
-                                <option selected disabled>select</option>
-
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-
-
-                            </select>
-                        </div>
+                        {{-- Removed Certificate select field as it does not exist in the database schema --}}
 
 
 
 
 
 
-                        <div class="col-md-6">
-                            <label for="selling_price" class="form-label">Selling Price</label>
-                            <input type="number" class="form-control" name="selling_price" id="selling_price"
-                                placeholder="Enter selling price" value="{{ old('selling_price') }}" />
-                        </div>
+                        {{-- Removed Selling Price input field as it does not exist in the database schema --}}
 
-                        <div class="col-md-6">
-                            <label for="discount_price" class="form-label">Discount Price</label>
-                            <input type="number" class="form-control" name="discount_price" id="discount_price"
-                                placeholder="Enter discount price" value="{{ old('discount_price') }}" />
-                        </div>
+                        {{-- Removed Discount Price input field as it does not exist in the database schema --}}
 
 
                         <!-- <div class="col-md-6">

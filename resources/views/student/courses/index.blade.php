@@ -1,34 +1,39 @@
-@extends('student.master')
+@extends('layouts.app')
 
 @section('content')
-<div class="page-content">
-    <h3>My Enrolled Courses</h3>
+<div class="container">
+    <h1>Available Courses</h1>
 
-    @foreach($courses as $course)
-        <div class="card mb-3">
-            <div class="card-header">
-                <h5>{{ $course->title }}</h5>
-            </div>
-            <div class="card-body">
-                <p>{{ $course->description }}</p>
-                <p><strong>Instructor:</strong> {{ $course->instructor }}</p>
-                <p><strong>Duration:</strong> {{ $course->duration }}</p>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-                <h6>Class Schedule</h6>
-                <ul>
-                    @foreach($course->classes as $class)
-                        <li>{{ $class->class_title }} - {{ $class->scheduled_time }} (Duration: {{ $class->duration }} mins)</li>
-                    @endforeach
-                </ul>
-
-                <h6>Quizzes</h6>
-                <ul>
-                    @foreach($course->quizzes as $quiz)
-                        <li>{{ $quiz->title }} - {{ $quiz->description }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    @endforeach
+    <form action="{{ route('student.courses.enroll') }}" method="POST">
+        @csrf
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Course Code</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($courses as $course)
+                <tr>
+                    <td>
+                        <input type="checkbox" name="course_ids[]" value="{{ $course->id }}"
+                            {{ in_array($course->id, $enrolledCourseIds) ? 'checked disabled' : '' }}>
+                    </td>
+                    <td>{{ $course->course_code }}</td>
+                    <td>{{ $course->title }}</td>
+                    <td>{{ $course->description }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Enroll Selected Courses</button>
+    </form>
 </div>
 @endsection

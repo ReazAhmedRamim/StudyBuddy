@@ -6,21 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->json('image')->nullable();
+            $table->string('course_code')->after('id')->unique();
+            $table->string('class_timing')->nullable()->after('duration');
         });
     }
 
     public function down()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->dropColumn('image');
+            $table->dropColumn('course_code');
+            $table->dropColumn('class_timing');
         });
     }
-
 };

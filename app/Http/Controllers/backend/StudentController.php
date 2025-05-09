@@ -13,8 +13,13 @@ class StudentController extends Controller
     public function dashboard()
     {
         $student = Auth::user();
-        $courses = Course::all();
+        $courses = Course::whereNull('deleted_at')->get();
+
+        \Log::info('Courses fetched for dashboard:', $courses->toArray());
+
         $enrolledCourseIds = $student->courses()->pluck('courses.id')->toArray();
+
+        \Log::info('Enrolled course IDs:', $enrolledCourseIds);
 
         return view('student.dashboard.index', compact('courses', 'enrolledCourseIds'));
     }

@@ -23,7 +23,7 @@
                             @if(in_array($course->id, $enrolledCourseIds))
                                 <button class="btn btn-secondary" disabled>Enrolled</button>
                             @else
-                                <form method="POST" action="{{ route('student.enroll') }}">
+                                <form method="POST" action="{{ route('student.courses.enroll') }}">
                                     @csrf
                                     <input type="hidden" name="course_id" value="{{ $course->id }}">
                                     <button type="submit" class="btn btn-primary">Enroll</button>

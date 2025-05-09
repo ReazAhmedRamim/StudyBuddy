@@ -1,42 +1,31 @@
-@extends('tutor.master')
+@extends('layouts.app')
 
 @section('content')
-<div class="page-content">
-    <h3>My Teaching Courses</h3>
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary"><i class="bx bx-book-reader"></i> My Created Courses</h2>
 
-    @foreach($courses as $course)
-        <div class="card mb-3">
-            <div class="card-header">
-                <h5>{{ $course->title }}</h5>
-            </div>
-            <div class="card-body">
-                <p>{{ $course->description }}</p>
-                <p><strong>Duration:</strong> {{ $course->duration }}</p>
-
-                <h6>Class Schedule</h6>
-                <ul>
-                    @foreach($course->classes as $class)
-                        <li>{{ $class->class_title }} - {{ $class->scheduled_time }} (Duration: {{ $class->duration }} mins)</li>
-                    @endforeach
-                </ul>
-
-                <h6>Quizzes</h6>
-                <ul>
-                    @foreach($course->quizzes as $quiz)
-                        <li>
-                            <form method="POST" action="{{ route('tutor.quiz.update', $quiz->quiz_id) }}">
-                                @csrf
-                                @method('PUT')
-                                <input type="text" name="title" value="{{ $quiz->title }}" required>
-                                <input type="text" name="description" value="{{ $quiz->description }}">
-                                <input type="datetime-local" name="scheduled_date" value="{{ old('scheduled_date', $quiz->scheduled_date ?? '') }}" required>
-                                <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                            </form>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+    @if($courses->isEmpty())
+        <div class="alert alert-info" role="alert">
+            You have not created any courses yet.
         </div>
-    @endforeach
+    @else
+        <div class="row">
+            @foreach($courses as $course)
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm border-primary h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ $course->title }}</h5>
+                            @if($course->class_timing)
+                                <p class="card-text"><strong>Class Timing:</strong> {{ $course->class_timing }}</p>
+                            @else
+                                <p class="card-text text-muted"><em>No class timing set.</em></p>
+                            @endif
+                            <a href="{{ route('tutor.quiz.upload', ['course' => $course->id]) }}" class="btn btn-primary mt-3">Upload Quiz Questions</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 </div>
 @endsection
