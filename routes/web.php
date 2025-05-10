@@ -17,12 +17,14 @@ Route::prefix('tutor')->name('tutor.')->group(function() {
 });
 
 // Inside your tutor route group
+use App\Http\Controllers\backend\CourseSectionController;
+
 Route::prefix('tutor')->group(function () {
     // ... other routes
     
     // Add this course section route
-    // Route::get('/course-section/{course}', [CourseSectionController::class, 'show'])
-    //      ->name('tutor.course-section.show');
+    Route::get('/course-section/{course}', [CourseSectionController::class, 'show'])
+         ->name('tutor.course-section.show');
 });
 
 // For resource controller
@@ -80,7 +82,9 @@ Route::prefix('tutor')
 
         Route::get('/schedule', [\App\Http\Controllers\TutorCoursesController::class, 'schedule'])->name('schedule');
 
-        Route::get('/course/{course}/upload-quiz', [\App\Http\Controllers\TutorCoursesController::class, 'uploadQuizQuestions'])->name('quiz.upload');
+    Route::get('/course/{course}/upload-quiz', [\App\Http\Controllers\TutorCoursesController::class, 'uploadQuizQuestions'])->name('quiz.upload');
+
+    Route::post('/course/{course}/store-quiz', [\App\Http\Controllers\TutorCoursesController::class, 'storeQuiz'])->name('quiz.store');
     });
 
 Route::put('/tutor/profile/update', [TutorProfileController::class, 'update'])->name('tutor.profile.update');

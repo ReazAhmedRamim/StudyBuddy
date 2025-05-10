@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <h2 class="mb-4 text-primary"><i class="bx bx-upload"></i> Upload Quiz Questions for: {{ $course->title }}</h2>
 
-    <form action="{{ route('tutor.quiz.store', ['course' => $course->id]) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('quiz.store', ['course' => $course->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-3">
