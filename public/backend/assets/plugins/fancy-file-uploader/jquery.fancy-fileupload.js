@@ -50,7 +50,7 @@
 		return (pos == 0 || (adjustprecision && result >= 99.995) ? result.toFixed(0) : result.toFixed(2)) + ' ' + abbreviations[pos];
 	};
 
-	var DisplayPreviewDialog = function(preview, endelem, inforow, data, settings) {
+	var DisplayPreviewDialog = function(preview, endelem, inforow, data, setting) {
 		var previewbackground = $('<div>').addClass('ff_fileupload_dialog_background');
 		var previewclone = preview.clone(true, true).click(function(e) {
 			e.stopPropagation();
@@ -63,7 +63,7 @@
 			previewbackground.remove();
 			endelem.focus();
 
-			if (settings.hidepreview)  settings.hidepreview.call(inforow, data, preview, previewclone);
+			if (setting.hidepreview)  setting.hidepreview.call(inforow, data, preview, previewclone);
 		};
 
 		$(document).on('keyup.fancy_fileupload', function(e) {
@@ -79,7 +79,7 @@
 		$('body').append(previewbackground);
 		previewclone.focus();
 
-		if (settings.showpreview)  settings.showpreview.call(inforow, data, preview, previewclone);
+		if (setting.showpreview)  setting.showpreview.call(inforow, data, preview, previewclone);
 	};
 
 	var InitShowAriaLabelInfo = function(inforow) {
@@ -124,10 +124,10 @@
 
 		if (typeof(options) === 'string' && options === 'destroy')  return this;
 
-		var settings = $.extend({}, $.fn.FancyFileUpload.defaults, options);
+		var setting = $.extend({}, $.fn.FancyFileUpload.defaults, options);
 
-		// Let custom callbacks make last second changes to the finalized settings.
-		if (settings.preinit)  settings.preinit(settings);
+		// Let custom callbacks make last second changes to the finalized setting.
+		if (setting.preinit)  setting.preinit(setting);
 
 		// Prevent default file drag-and-drop operations.
 		$(document).off('drop.fancy_fileupload dragover.fancy_fileupload');
@@ -137,7 +137,7 @@
 
 		// Some useful functions.
 		var Translate = function(str) {
-			return (settings.langmap[str] ? settings.langmap[str] : str);
+			return (setting.langmap[str] ? setting.langmap[str] : str);
 		};
 
 		// Prevent the user from leaving the page if there is an active upload.
@@ -176,10 +176,10 @@
 			data.ff_info = {};
 			data.ff_info.errors = [];
 			data.ff_info.retries = 0;
-			data.ff_info.retrydelay = settings.retrydelay;
+			data.ff_info.retrydelay = setting.retrydelay;
 			data.ff_info.removewidget = false;
 			data.ff_info.inforow = inforow;
-			data.ff_info.displayfilesize = GetDisplayFilesize(data.files[0].size, settings.adjustprecision, settings.displayunits);
+			data.ff_info.displayfilesize = GetDisplayFilesize(data.files[0].size, setting.adjustprecision, setting.displayunits);
 			data.context = inforow;
 
 			// A couple of functions for handling actions.
@@ -187,7 +187,7 @@
 				e.preventDefault();
 
 				// Set filename.
-				if (settings.edit && !data.ff_info.errors.length)
+				if (setting.edit && !data.ff_info.errors.length)
 				{
 					var fileinput = inforow.find('.ff_fileupload_filename input');
 					if (fileinput.length)
@@ -226,7 +226,7 @@
 					data.submit();
 				};
 
-				if (settings.startupload)  settings.startupload.call(inforow, SubmitUpload, e, data);
+				if (setting.startupload)  setting.startupload.call(inforow, SubmitUpload, e, data);
 				else  SubmitUpload();
 			};
 
@@ -246,7 +246,7 @@
 					{
 						if (!confirm(Translate('This file is waiting to start.\n\nCancel the operation and remove the file from the list?')))  return;
 
-						if (settings.uploadcancelled)  settings.uploadcancelled.call(data.ff_info.inforow, e, data);
+						if (setting.uploadcancelled)  setting.uploadcancelled.call(data.ff_info.inforow, e, data);
 					}
 
 					inforow.remove();
@@ -265,7 +265,7 @@
 				{
 					if (inforow.hasClass('ff_fileupload_starting'))
 					{
-						if (settings.uploadcancelled)  settings.uploadcancelled.call(data.ff_info.inforow, e, data);
+						if (setting.uploadcancelled)  setting.uploadcancelled.call(data.ff_info.inforow, e, data);
 					}
 
 					inforow.remove();
@@ -310,7 +310,7 @@
 					e.preventDefault();
 
 					this.blur();
-					DisplayPreviewDialog(preview, this, inforow, data, settings);
+					DisplayPreviewDialog(preview, this, inforow, data, setting);
 				});
 			}
 			else
@@ -323,21 +323,21 @@
 			if (!hasimage)  inforow.find('.ff_fileupload_preview_image').addClass('ff_fileupload_preview_text_with_color').addClass('ff_fileupload_preview_text_' + fileextclass).text(fileext);
 
 			// Validate inputs.
-			if (settings.accept)
+			if (setting.accept)
 			{
 				var found = false;
-				for (var x = 0; x < settings.accept.length && !found; x++)
+				for (var x = 0; x < setting.accept.length && !found; x++)
 				{
-					if (settings.accept[x] === fileext || settings.accept[x] === data.files[0].type)  found = true;
+					if (setting.accept[x] === fileext || setting.accept[x] === data.files[0].type)  found = true;
 				}
 
 				if (!found)  data.ff_info.errors.push(Translate('Invalid file extension.'));
 			}
 
-			if (settings.maxfilesize > -1 && data.files[0].size > settings.maxfilesize)  data.ff_info.errors.push(FormatStr(Translate('File is too large.  Maximum file size is {0}.'), GetDisplayFilesize(settings.maxfilesize, settings.adjustprecision, settings.displayunits)));
+			if (setting.maxfilesize > -1 && data.files[0].size > setting.maxfilesize)  data.ff_info.errors.push(FormatStr(Translate('File is too large.  Maximum file size is {0}.'), GetDisplayFilesize(setting.maxfilesize, setting.adjustprecision, setting.displayunits)));
 
 			// Filename text field/display.
-			if (settings.edit && !data.ff_info.errors.length)
+			if (setting.edit && !data.ff_info.errors.length)
 			{
 				inforow.find('.ff_fileupload_filename').append($('<input>').attr('type', 'text').val(filename).keydown(function(e) {
 					// Start uploading if someone presses enter.
@@ -350,7 +350,7 @@
 			}
 
 			// File/Upload information.
-			inforow.find('.ff_fileupload_fileinfo').text(data.ff_info.displayfilesize + (hasimage && settings.edit && !data.ff_info.errors.length ? ' | .' + fileext : ''));
+			inforow.find('.ff_fileupload_fileinfo').text(data.ff_info.displayfilesize + (hasimage && setting.edit && !data.ff_info.errors.length ? ' | .' + fileext : ''));
 
 			// Errors.
 			if (data.ff_info.errors.length)  inforow.find('.ff_fileupload_errors').html(data.ff_info.errors.join('<br>')).removeClass('ff_fileupload_hidden');
@@ -376,16 +376,16 @@
 
 			uploads.append(inforow);
 
-			if (settings.added)  settings.added.call(inforow, e, data);
+			if (setting.added)  setting.added.call(inforow, e, data);
 		};
 
 		var UploadProgress = function(e, data) {
 			var progress = (data.total < 1 ? 0 : data.loaded / data.total * 100);
 
-			data.ff_info.fileinfo.text(FormatStr(Translate('{0} of {1} | {2}%'), GetDisplayFilesize(data.loaded, settings.adjustprecision, settings.displayunits), data.ff_info.displayfilesize, progress.toFixed(0)));
+			data.ff_info.fileinfo.text(FormatStr(Translate('{0} of {1} | {2}%'), GetDisplayFilesize(data.loaded, setting.adjustprecision, setting.displayunits), data.ff_info.displayfilesize, progress.toFixed(0)));
 			data.ff_info.progressbar.css('width', progress + '%');
 
-			if (settings.continueupload && settings.continueupload.call(data.ff_info.inforow, e, data) === false)  data.abort();
+			if (setting.continueupload && setting.continueupload.call(data.ff_info.inforow, e, data) === false)  data.abort();
 		};
 
 		var UploadFailed = function(e, data) {
@@ -396,7 +396,7 @@
 				data.errorThrown = 'failed_with_msg';
 			}
 
-			if (data.errorThrown !== 'abort' && data.errorThrown !== 'failed_with_msg' && data.uploadedBytes < data.files[0].size && data.ff_info.retries < settings.retries)
+			if (data.errorThrown !== 'abort' && data.errorThrown !== 'failed_with_msg' && data.uploadedBytes < data.files[0].size && data.ff_info.retries < setting.retries)
 			{
 				data.ff_info.fileinfo.text(FormatStr(Translate('{0} | Network error, retrying in a moment... ({1})'), data.ff_info.displayfilesize, data.errorThrown));
 
@@ -418,7 +418,7 @@
 
 			data.ff_info.inforow.removeClass('ff_fileupload_uploading');
 
-			if (settings.uploadcancelled)  settings.uploadcancelled.call(data.ff_info.inforow, e, data);
+			if (setting.uploadcancelled)  setting.uploadcancelled.call(data.ff_info.inforow, e, data);
 
 			if (data.ff_info.removewidget)
 			{
@@ -458,7 +458,7 @@
 
 			data.ff_info.inforow.removeClass('ff_fileupload_uploading');
 
-			if (settings.uploadcompleted)  settings.uploadcompleted.call(data.ff_info.inforow, e, data);
+			if (setting.uploadcompleted)  setting.uploadcompleted.call(data.ff_info.inforow, e, data);
 
 			if (data.ff_info.removewidget)
 			{
@@ -482,7 +482,7 @@
 		var UploadChunkSend = function(e, data) {
 			if (data.ff_info)
 			{
-				if (settings.continueupload && settings.continueupload.call(data.ff_info.inforow, e, data) === false)
+				if (setting.continueupload && setting.continueupload.call(data.ff_info.inforow, e, data) === false)
 				{
 					if (!data.ff_info.lastresult || data.ff_info.lastresult.success)
 					{
@@ -509,7 +509,7 @@
 		var UploadChunkDone = function(e, data) {
 			// Reset retries for successful chunked uploads.
 			data.ff_info.retries = 0;
-			data.ff_info.retrydelay = settings.retrydelay;
+			data.ff_info.retrydelay = setting.retrydelay;
 
 			// Save for the next UploadChunkSend() call.
 			data.ff_info.lastresult = data.result;
@@ -520,29 +520,29 @@
 			var $this = $(this);
 
 			// Calculate the action URL.
-			if (settings.url === '')
+			if (setting.url === '')
 			{
 				var url = $this.closest('form').attr('action');
-				if (url)  settings.url = url;
+				if (url)  setting.url = url;
 			}
 
 			// Create a separate, hidden form on the page for handling file uploads.
 			var form = $('<form>').addClass('ff_fileupload_hidden').attr({
-				'action' : settings.url,
+				'action' : setting.url,
 				'method' : 'post',
 				'enctype' : 'multipart/form-data'
 			});
 			$('body').append(form);
 
 			// Append hidden input elements.
-			for (var x in settings.params)
+			for (var x in setting.params)
 			{
-				if (settings.params.hasOwnProperty(x))
+				if (setting.params.hasOwnProperty(x))
 				{
 					var input = $('<input>').attr({
 						'type' : 'hidden',
 						'name' : x,
-						'value' : settings.params[x]
+						'value' : setting.params[x]
 					});
 
 					form.append(input);
@@ -562,15 +562,15 @@
 			{
 				fileinput.attr('accept', $this.attr('accept'));
 
-				if (!settings.accept)
+				if (!setting.accept)
 				{
 					var accept = $this.attr('accept').split(',');
 
-					settings.accept = [];
+					setting.accept = [];
 					for (var x = 0; x < accept.length; x++)
 					{
 						var opt = $.trim(accept[x]).toLowerCase();
-						settings.accept.push(opt.indexOf('/') < 0 && opt.lastIndexOf('.') > -1 ? opt.substring(opt.lastIndexOf('.') + 1) : opt);
+						setting.accept.push(opt.indexOf('/') < 0 && opt.lastIndexOf('.') > -1 ? opt.substring(opt.lastIndexOf('.') + 1) : opt);
 					}
 				}
 			}
@@ -597,7 +597,7 @@
 			dropzonewrap.append(dropzonetools);
 
 			// Record audio.
-			if (settings.recordaudio && navigator.mediaDevices && window.MediaRecorder)
+			if (setting.recordaudio && navigator.mediaDevices && window.MediaRecorder)
 			{
 				var audiobutton = $('<button>').addClass('ff_fileupload_dropzone_tool').addClass('ff_fileupload_recordaudio').attr('type', 'button').attr('aria-label', Translate('Record audio using a microphone'));
 				dropzonetools.append(audiobutton);
@@ -610,7 +610,7 @@
 					if (!audiorec)
 					{
 						navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-							audiorec = new MediaRecorder(stream, settings.audiosettings);
+							audiorec = new MediaRecorder(stream, setting.audiosetting);
 
 							audiorec.addEventListener('dataavailable', function(e) {
 								if (e.data.size > 0)  audiochunks.push(e.data);
@@ -648,7 +648,7 @@
 			}
 
 			// Record video.
-			if (settings.recordvideo && navigator.mediaDevices && window.MediaRecorder)
+			if (setting.recordvideo && navigator.mediaDevices && window.MediaRecorder)
 			{
 				var videobutton = $('<button>').addClass('ff_fileupload_dropzone_tool').addClass('ff_fileupload_recordvideo').attr('type', 'button').attr('aria-label', Translate('Record video using a camera'));
 				dropzonetools.append(videobutton);
@@ -664,7 +664,7 @@
 					if (!videorec)
 					{
 						var streamhandler = function(stream) {
-							videorec = new MediaRecorder(stream, settings.videosettings);
+							videorec = new MediaRecorder(stream, setting.videosetting);
 
 							videorec.addEventListener('dataavailable', function(e) {
 								if (e.data.size > 0)  videochunks.push(e.data);
@@ -723,7 +723,7 @@
 
 			// Initialize jQuery File Upload using the hidden form and visible dropzone.
 			var baseoptions = {
-				url: settings.url,
+				url: setting.url,
 				dataType: 'json',
 				pasteZone: dropzonewrap,
 				limitConcurrentUploads: 2
@@ -742,17 +742,17 @@
 			};
 
 			// The user interface requires certain options to be set correctly.
-			fileinput.fileupload($.extend(baseoptions, settings.fileupload, immutableoptions));
+			fileinput.fileupload($.extend(baseoptions, setting.fileupload, immutableoptions));
 
 			// Save necessary information in case the uploader is destroyed later.
 			$this.data('fancy-fileupload', {
 				'fileuploadwrap' : fileuploadwrap,
 				'form' : form,
-				'settings': settings
+				'setting': setting
 			});
 
 			// Post-initialization callback.
-			if (settings.postinit)  settings.postinit.call($this);
+			if (setting.postinit)  setting.postinit.call($this);
 		});
 	}
 
@@ -767,9 +767,9 @@
 		'retries' : 5,
 		'retrydelay' : 500,
 		'recordaudio' : false,
-		'audiosettings' : {},
+		'audiosetting' : {},
 		'recordvideo' : false,
-		'videosettings' : {},
+		'videosetting' : {},
 		'preinit' : null,
 		'postinit' : null,
 		'added' : null,

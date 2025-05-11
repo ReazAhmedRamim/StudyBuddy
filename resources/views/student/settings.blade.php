@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>Settings</h2>
-    <p>This is the settings page.</p>
+    <h2>setting</h2>
+    <p>This is the setting page.</p>
 </div>
 @endsection

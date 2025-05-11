@@ -33,15 +33,15 @@ var HOURS_IN_DAY = 24,
 /**
  * The time picker constructor
  */
-function TimePicker( picker, settings ) {
+function TimePicker( picker, setting ) {
 
     var clock = this,
         elementValue = picker.$node[ 0 ].value,
         elementDataValue = picker.$node.data( 'value' ),
         valueString = elementDataValue || elementValue,
-        formatString = elementDataValue ? settings.formatSubmit : settings.format
+        formatString = elementDataValue ? setting.formatSubmit : setting.format
 
-    clock.settings = settings
+    clock.setting = setting
     clock.$node = picker.$node
 
     // The queue of methods that will be used to build item objects.
@@ -61,15 +61,15 @@ function TimePicker( picker, settings ) {
     clock.item = {}
 
     clock.item.clear = null
-    clock.item.interval = settings.interval || 30
-    clock.item.disable = ( settings.disable || [] ).slice( 0 )
+    clock.item.interval = setting.interval || 30
+    clock.item.disable = ( setting.disable || [] ).slice( 0 )
     clock.item.enable = -(function( collectionDisabled ) {
         return collectionDisabled[ 0 ] === true ? collectionDisabled.shift() : -1
     })( clock.item.disable )
 
     clock.
-        set( 'min', settings.min ).
-        set( 'max', settings.max ).
+        set( 'min', setting.min ).
+        set( 'max', setting.max ).
         set( 'now' )
 
     // When there’s a value, set the `select`, which in turn
@@ -108,7 +108,7 @@ function TimePicker( picker, settings ) {
     picker.
         on( 'render', function() {
             var $pickerHolder = picker.$root.children(),
-                $viewset = $pickerHolder.find( '.' + settings.klass.viewset ),
+                $viewset = $pickerHolder.find( '.' + setting.klass.viewset ),
                 vendors = function( prop ) {
                     return ['webkit', 'moz', 'ms', 'o', ''].map(function( vendor ) {
                         return ( vendor ? '-' + vendor + '-' : '' ) + prop
@@ -284,10 +284,10 @@ TimePicker.prototype.createRange = function( from, to ) {
 
     // Create relative times.
     if ( _.isInteger( from ) && $.isPlainObject( to ) ) {
-        from = [ to.hour, to.mins + ( from * clock.settings.interval ) ];
+        from = [ to.hour, to.mins + ( from * clock.setting.interval ) ];
     }
     else if ( _.isInteger( to ) && $.isPlainObject( from ) ) {
-        to = [ from.hour, from.mins + ( to * clock.settings.interval ) ];
+        to = [ from.hour, from.mins + ( to * clock.setting.interval ) ];
     }
 
     return {
@@ -534,7 +534,7 @@ TimePicker.prototype.parse = function( type, value, options ) {
     // We need a `.format` to parse the value with.
     if ( !( options && options.format ) ) {
         options = options || {}
-        options.format = clock.settings.format
+        options.format = clock.setting.format
     }
 
     // Convert the format into an array and then map through it.
@@ -881,7 +881,7 @@ TimePicker.prototype.nodes = function( isOpen ) {
 
     var
         clock = this,
-        settings = clock.settings,
+        setting = clock.setting,
         selectedObject = clock.item.select,
         highlightedObject = clock.item.highlight,
         viewsetObject = clock.item.view,
@@ -900,29 +900,29 @@ TimePicker.prototype.nodes = function( isOpen ) {
                     isSelected = selectedObject && selectedObject.pick == timeMinutes,
                     isHighlighted = highlightedObject && highlightedObject.pick == timeMinutes,
                     isDisabled = disabledCollection && clock.disabled( loopedTime ),
-                    formattedTime = _.trigger( clock.formats.toString, clock, [ settings.format, loopedTime ] )
+                    formattedTime = _.trigger( clock.formats.toString, clock, [ setting.format, loopedTime ] )
                 return [
-                    _.trigger( clock.formats.toString, clock, [ _.trigger( settings.formatLabel, clock, [ loopedTime ] ) || settings.format, loopedTime ] ),
+                    _.trigger( clock.formats.toString, clock, [ _.trigger( setting.formatLabel, clock, [ loopedTime ] ) || setting.format, loopedTime ] ),
                     (function( klasses ) {
 
                         if ( isSelected ) {
-                            klasses.push( settings.klass.selected )
+                            klasses.push( setting.klass.selected )
                         }
 
                         if ( isHighlighted ) {
-                            klasses.push( settings.klass.highlighted )
+                            klasses.push( setting.klass.highlighted )
                         }
 
                         if ( viewsetObject && viewsetObject.pick == timeMinutes ) {
-                            klasses.push( settings.klass.viewset )
+                            klasses.push( setting.klass.viewset )
                         }
 
                         if ( isDisabled ) {
-                            klasses.push( settings.klass.disabled )
+                            klasses.push( setting.klass.disabled )
                         }
 
                         return klasses.join( ' ' )
-                    })( [ settings.klass.listItem ] ),
+                    })( [ setting.klass.listItem ] ),
                     'data-pick=' + loopedTime.pick + ' ' + _.ariaAttr({
                         role: 'option',
                         label: formattedTime,
@@ -939,14 +939,14 @@ TimePicker.prototype.nodes = function( isOpen ) {
             'li',
             _.node(
                 'button',
-                settings.clear,
-                settings.klass.buttonClear,
+                setting.clear,
+                setting.klass.buttonClear,
                 'type=button data-clear=1' + ( isOpen ? '' : ' disabled' ) + ' ' +
                 _.ariaAttr({ controls: clock.$node[0].id })
             ),
             '', _.ariaAttr({ role: 'presentation' })
         ),
-        settings.klass.list,
+        setting.klass.list,
         _.ariaAttr({ role: 'listbox', controls: clock.$node[0].id })
     )
 } //TimePicker.prototype.nodes

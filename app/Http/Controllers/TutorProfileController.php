@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as AuthUser;
 
 class TutorProfileController extends Controller
 {
-    public function settings()
+    public function setting()
     {
         return view('tutor.profile.setting');
     }

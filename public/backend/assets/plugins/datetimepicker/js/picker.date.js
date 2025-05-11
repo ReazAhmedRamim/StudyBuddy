@@ -31,14 +31,14 @@ var DAYS_IN_WEEK = 7,
 /**
  * The date picker constructor
  */
-function DatePicker( picker, settings ) {
+function DatePicker( picker, setting ) {
 
     var calendar = this,
         element = picker.$node[ 0 ],
         elementValue = element.value,
         elementDataValue = picker.$node.data( 'value' ),
         valueString = elementDataValue || elementValue,
-        formatString = elementDataValue ? settings.formatSubmit : settings.format,
+        formatString = elementDataValue ? setting.formatSubmit : setting.format,
         isRTL = function() {
 
             return element.currentStyle ?
@@ -50,7 +50,7 @@ function DatePicker( picker, settings ) {
                 getComputedStyle( picker.$root[0] ).direction == 'rtl'
         }
 
-    calendar.settings = settings
+    calendar.setting = setting
     calendar.$node = picker.$node
 
     // The queue of methods that will be used to build item objects.
@@ -69,14 +69,14 @@ function DatePicker( picker, settings ) {
     calendar.item = {}
 
     calendar.item.clear = null
-    calendar.item.disable = ( settings.disable || [] ).slice( 0 )
+    calendar.item.disable = ( setting.disable || [] ).slice( 0 )
     calendar.item.enable = -(function( collectionDisabled ) {
         return collectionDisabled[ 0 ] === true ? collectionDisabled.shift() : -1
     })( calendar.item.disable )
 
     calendar.
-        set( 'min', settings.min ).
-        set( 'max', settings.max ).
+        set( 'min', setting.min ).
+        set( 'max', setting.max ).
         set( 'now' )
 
     // When there’s a value, set the `select`, which in turn
@@ -118,25 +118,25 @@ function DatePicker( picker, settings ) {
     // Bind some picker events.
     picker.
         on( 'render', function() {
-            picker.$root.find( '.' + settings.klass.selectMonth ).on( 'change', function() {
+            picker.$root.find( '.' + setting.klass.selectMonth ).on( 'change', function() {
                 var value = this.value
                 if ( value ) {
                     picker.set( 'highlight', [ picker.get( 'view' ).year, value, picker.get( 'highlight' ).date ] )
-                    picker.$root.find( '.' + settings.klass.selectMonth ).trigger( 'focus' )
+                    picker.$root.find( '.' + setting.klass.selectMonth ).trigger( 'focus' )
                 }
             })
-            picker.$root.find( '.' + settings.klass.selectYear ).on( 'change', function() {
+            picker.$root.find( '.' + setting.klass.selectYear ).on( 'change', function() {
                 var value = this.value
                 if ( value ) {
                     picker.set( 'highlight', [ value, picker.get( 'view' ).month, picker.get( 'highlight' ).date ] )
-                    picker.$root.find( '.' + settings.klass.selectYear ).trigger( 'focus' )
+                    picker.$root.find( '.' + setting.klass.selectYear ).trigger( 'focus' )
                 }
             })
         }, 1 ).
         on( 'open', function() {
             var includeToday = ''
             if ( calendar.disabled( calendar.get('now') ) ) {
-                includeToday = ':not(.' + settings.klass.buttonToday + ')'
+                includeToday = ':not(.' + setting.klass.buttonToday + ')'
             }
             picker.$root.find( 'button' + includeToday + ', select' ).attr( 'disabled', false )
         }, 1 ).
@@ -560,7 +560,7 @@ DatePicker.prototype.disabled = function( dateToVerify ) {
 
             // If the date is a number, match the weekday with 0index and `firstDay` check.
             if ( _.isInteger( dateToDisable ) ) {
-                return dateToVerify.day === ( calendar.settings.firstDay ? dateToDisable : dateToDisable - 1 ) % 7
+                return dateToVerify.day === ( calendar.setting.firstDay ? dateToDisable : dateToDisable - 1 ) % 7
             }
 
             // If it’s an array or a native JS date, create and match the exact date.
@@ -605,7 +605,7 @@ DatePicker.prototype.parse = function( type, value, options ) {
     // We need a `.format` to parse the value with.
     if ( !( options && options.format ) ) {
         options = options || {}
-        options.format = calendar.settings.format
+        options.format = calendar.setting.format
     }
 
     // Convert the format into an array and then map through it.
@@ -682,13 +682,13 @@ DatePicker.prototype.formats = (function() {
 
             // If there's a string, then get the length of the first word.
             // Otherwise return the short selected weekday.
-            return string ? getFirstWordLength( string ) : this.settings.weekdaysShort[ dateObject.day ]
+            return string ? getFirstWordLength( string ) : this.setting.weekdaysShort[ dateObject.day ]
         },
         dddd: function( string, dateObject ) {
 
             // If there's a string, then get the length of the first word.
             // Otherwise return the full selected weekday.
-            return string ? getFirstWordLength( string ) : this.settings.weekdaysFull[ dateObject.day ]
+            return string ? getFirstWordLength( string ) : this.setting.weekdaysFull[ dateObject.day ]
         },
         m: function( string, dateObject ) {
 
@@ -704,7 +704,7 @@ DatePicker.prototype.formats = (function() {
         },
         mmm: function( string, dateObject ) {
 
-            var collection = this.settings.monthsShort
+            var collection = this.setting.monthsShort
 
             // If there's a string, get length of the relevant month from the short
             // months collection. Otherwise return the selected month from that collection.
@@ -712,7 +712,7 @@ DatePicker.prototype.formats = (function() {
         },
         mmmm: function( string, dateObject ) {
 
-            var collection = this.settings.monthsFull
+            var collection = this.setting.monthsFull
 
             // If there's a string, get length of the relevant month from the full
             // months collection. Otherwise return the selected month from that collection.
@@ -785,7 +785,7 @@ DatePicker.prototype.isDateExact = function( one, two ) {
 DatePicker.prototype.isDateOverlap = function( one, two ) {
 
     var calendar = this,
-        firstDay = calendar.settings.firstDay ? 1 : 0
+        firstDay = calendar.setting.firstDay ? 1 : 0
 
     // When we’re working with a weekday index, compare the days.
     if ( _.isInteger( one ) && ( _.isDate( two ) || $.isArray( two ) ) ) {
@@ -973,7 +973,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
 
     var
         calendar = this,
-        settings = calendar.settings,
+        setting = calendar.setting,
         calendarItem = calendar.item,
         nowObject = calendarItem.now,
         selectedObject = calendarItem.select,
@@ -989,7 +989,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
         tableHead = (function( collection, fullCollection ) {
 
             // If the first day should be Monday, move Sunday to the end.
-            if ( settings.firstDay ) {
+            if ( setting.firstDay ) {
                 collection.push( collection.shift() )
                 fullCollection.push( fullCollection.shift() )
             }
@@ -1007,14 +1007,14 @@ DatePicker.prototype.nodes = function( isOpen ) {
                         item: function( counter ) {
                             return [
                                 collection[ counter ],
-                                settings.klass.weekdays,
+                                setting.klass.weekdays,
                                 'scope=col title="' + fullCollection[ counter ] + '"'
                             ]
                         }
                     })
                 )
             ) //endreturn
-        })( ( settings.showWeekdaysFull ? settings.weekdaysFull : settings.weekdaysShort ).slice( 0 ), settings.weekdaysFull.slice( 0 ) ), //tableHead
+        })( ( setting.showWeekdaysFull ? setting.weekdaysFull : setting.weekdaysShort ).slice( 0 ), setting.weekdaysFull.slice( 0 ) ), //tableHead
 
 
         // Create the nav for next/prev month.
@@ -1024,19 +1024,19 @@ DatePicker.prototype.nodes = function( isOpen ) {
             return _.node(
                 'div',
                 ' ',
-                settings.klass[ 'nav' + ( next ? 'Next' : 'Prev' ) ] + (
+                setting.klass[ 'nav' + ( next ? 'Next' : 'Prev' ) ] + (
 
                     // If the focused month is outside the range, disabled the button.
                     ( next && viewsetObject.year >= maxLimitObject.year && viewsetObject.month >= maxLimitObject.month ) ||
                     ( !next && viewsetObject.year <= minLimitObject.year && viewsetObject.month <= minLimitObject.month ) ?
-                    ' ' + settings.klass.navDisabled : ''
+                    ' ' + setting.klass.navDisabled : ''
                 ),
                 'data-nav=' + ( next || -1 ) + ' ' + 'tabindex="0" ' +
                 _.ariaAttr({
                     role: 'button',
                     controls: calendar.$node[0].id + '_table'
                 }) + ' ' +
-                'title="' + (next ? settings.labelMonthNext : settings.labelMonthPrev ) + '"'
+                'title="' + (next ? setting.labelMonthNext : setting.labelMonthPrev ) + '"'
             ) //endreturn
         }, //createMonthNav
 
@@ -1044,10 +1044,10 @@ DatePicker.prototype.nodes = function( isOpen ) {
         // Create the month label.
         createMonthLabel = function() {
 
-            var monthsCollection = settings.showMonthsShort ? settings.monthsShort : settings.monthsFull
+            var monthsCollection = setting.showMonthsShort ? setting.monthsShort : setting.monthsFull
 
             // If there are months to select, add a dropdown menu.
-            if ( settings.selectMonths ) {
+            if ( setting.selectMonths ) {
 
                 return _.node( 'select',
                     _.group({
@@ -1075,15 +1075,15 @@ DatePicker.prototype.nodes = function( isOpen ) {
                             ]
                         }
                     }),
-                    settings.klass.selectMonth,
+                    setting.klass.selectMonth,
                     ( isOpen ? '' : 'disabled' ) + ' ' +
                     _.ariaAttr({ controls: calendar.$node[0].id + '_table' }) + ' ' +
-                    'title="' + settings.labelMonthSelect + '"'
+                    'title="' + setting.labelMonthSelect + '"'
                 )
             }
 
             // If there's a need for a month selector
-            return _.node( 'div', monthsCollection[ viewsetObject.month ], settings.klass.month )
+            return _.node( 'div', monthsCollection[ viewsetObject.month ], setting.klass.month )
         }, //createMonthLabel
 
 
@@ -1094,7 +1094,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
 
             // If years selector is set to a literal "true", set it to 5. Otherwise
             // divide in half to get half before and half after focused year.
-            numberYears = settings.selectYears === true ? 5 : ~~( settings.selectYears / 2 )
+            numberYears = setting.selectYears === true ? 5 : ~~( setting.selectYears / 2 )
 
             // If there are years to select, add a dropdown menu.
             if ( numberYears ) {
@@ -1141,23 +1141,23 @@ DatePicker.prototype.nodes = function( isOpen ) {
                             ]
                         }
                     }),
-                    settings.klass.selectYear,
+                    setting.klass.selectYear,
                     ( isOpen ? '' : 'disabled' ) + ' ' + _.ariaAttr({ controls: calendar.$node[0].id + '_table' }) + ' ' +
-                    'title="' + settings.labelYearSelect + '"'
+                    'title="' + setting.labelYearSelect + '"'
                 )
             }
 
             // Otherwise just return the year focused
-            return _.node( 'div', focusedYear, settings.klass.year )
+            return _.node( 'div', focusedYear, setting.klass.year )
         } //createYearLabel
 
 
     // Create and return the entire calendar.
     return _.node(
         'div',
-        ( settings.selectYears ? createYearLabel() + createMonthLabel() : createMonthLabel() + createYearLabel() ) +
+        ( setting.selectYears ? createYearLabel() + createMonthLabel() : createMonthLabel() + createYearLabel() ) +
         createMonthNav() + createMonthNav( 1 ),
-        settings.klass.header
+        setting.klass.header
     ) + _.node(
         'table',
         tableHead +
@@ -1171,7 +1171,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
                 item: function( rowCounter ) {
 
                     // If Monday is the first day and the month starts on Sunday, shift the date back a week.
-                    var shiftDateBy = settings.firstDay && calendar.create([ viewsetObject.year, viewsetObject.month, 1 ]).day === 0 ? -7 : 0
+                    var shiftDateBy = setting.firstDay && calendar.create([ viewsetObject.year, viewsetObject.month, 1 ]).day === 0 ? -7 : 0
 
                     return [
                         _.group({
@@ -1184,13 +1184,13 @@ DatePicker.prototype.nodes = function( isOpen ) {
                             item: function( targetDate ) {
 
                                 // Convert the time date from a relative date to a target date.
-                                targetDate = calendar.create([ viewsetObject.year, viewsetObject.month, targetDate + ( settings.firstDay ? 1 : 0 ) ])
+                                targetDate = calendar.create([ viewsetObject.year, viewsetObject.month, targetDate + ( setting.firstDay ? 1 : 0 ) ])
 
                                 var isSelected = selectedObject && selectedObject.pick == targetDate.pick,
                                     isHighlighted = highlightedObject && highlightedObject.pick == targetDate.pick,
                                     isDisabled = disabledCollection && calendar.disabled( targetDate ) || targetDate.pick < minLimitObject.pick || targetDate.pick > maxLimitObject.pick,
-                                    formattedDate = _.trigger( calendar.formats.toString, calendar, [ settings.format, targetDate ] ),
-                                    calendarNodeUniqueId = settings.id + '_' + targetDate.pick
+                                    formattedDate = _.trigger( calendar.formats.toString, calendar, [ setting.format, targetDate ] ),
+                                    calendarNodeUniqueId = setting.id + '_' + targetDate.pick
 
                                 return [
                                     _.node(
@@ -1199,30 +1199,30 @@ DatePicker.prototype.nodes = function( isOpen ) {
                                         (function( klasses ) {
 
                                             // Add the `infocus` or `outfocus` classes based on month in view.
-                                            klasses.push( viewsetObject.month == targetDate.month ? settings.klass.infocus : settings.klass.outfocus )
+                                            klasses.push( viewsetObject.month == targetDate.month ? setting.klass.infocus : setting.klass.outfocus )
 
                                             // Add the `today` class if needed.
                                             if ( nowObject.pick == targetDate.pick ) {
-                                                klasses.push( settings.klass.now )
+                                                klasses.push( setting.klass.now )
                                             }
 
                                             // Add the `selected` class if something's selected and the time matches.
                                             if ( isSelected ) {
-                                                klasses.push( settings.klass.selected )
+                                                klasses.push( setting.klass.selected )
                                             }
 
                                             // Add the `highlighted` class if something's highlighted and the time matches.
                                             if ( isHighlighted ) {
-                                                klasses.push( settings.klass.highlighted )
+                                                klasses.push( setting.klass.highlighted )
                                             }
 
                                             // Add the `disabled` class if something's disabled and the object matches.
                                             if ( isDisabled ) {
-                                                klasses.push( settings.klass.disabled )
+                                                klasses.push( setting.klass.disabled )
                                             }
 
                                             return klasses.join( ' ' )
-                                        })([ settings.klass.day ]),
+                                        })([ setting.klass.day ]),
                                         'data-pick=' + targetDate.pick + ' id=' + calendarNodeUniqueId + ' tabindex="0" ' + _.ariaAttr({
                                             role: 'gridcell',
                                             label: formattedDate,
@@ -1239,7 +1239,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
                 }
             })
         ),
-        settings.klass.table,
+        setting.klass.table,
         'id="' + calendar.$node[0].id + '_table' + '" ' + _.ariaAttr({
             role: 'grid',
             controls: calendar.$node[0].id,
@@ -1250,19 +1250,19 @@ DatePicker.prototype.nodes = function( isOpen ) {
     // * For Firefox forms to submit, make sure to set the buttons’ `type` attributes as “button”.
     _.node(
         'div',
-        _.node( 'button', settings.today, settings.klass.buttonToday,
+        _.node( 'button', setting.today, setting.klass.buttonToday,
             'type=button data-pick=' + nowObject.pick +
             ( isOpen && !calendar.disabled(nowObject) ? '' : ' disabled' ) + ' ' +
             _.ariaAttr({ controls: calendar.$node[0].id }) ) +
-        _.node( 'button', settings.clear, settings.klass.buttonClear,
+        _.node( 'button', setting.clear, setting.klass.buttonClear,
             'type=button data-clear=1' +
             ( isOpen ? '' : ' disabled' ) + ' ' +
             _.ariaAttr({ controls: calendar.$node[0].id }) ) +
-        _.node('button', settings.close, settings.klass.buttonClose,
+        _.node('button', setting.close, setting.klass.buttonClose,
             'type=button data-close=true ' +
             ( isOpen ? '' : ' disabled' ) + ' ' +
             _.ariaAttr({ controls: calendar.$node[0].id }) ),
-        settings.klass.footer
+        setting.klass.footer
     ) //endreturn
 } //DatePicker.prototype.nodes
 

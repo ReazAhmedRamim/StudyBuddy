@@ -36,5 +36,15 @@ class Course extends Model
     {
         return $this->hasMany(CourseGoal::class);
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active'); // Requires a 'status' field in courses table
+    }
+
+    public function scopeCreatedLast30Days($query)
+    {
+        return $query->where('created_at', '>=', now()->subDays(30));
+    }
 }
 

@@ -214,7 +214,7 @@
       //
       // The upload starts when the submit method is invoked on the data parameter.
       // The data object contains a files property holding the added files
-      // and allows you to override plugin options as well as define ajax settings.
+      // and allows you to override plugin options as well as define ajax setting.
       //
       // Listeners for this callback can also be bound the following way:
       // .on('fileuploadadd', func);
@@ -293,8 +293,8 @@
       // Callback for completed (success, abort or error) chunk upload requests:
       // chunkalways: function (e, data) {}, // .on('fileuploadchunkalways', func);
 
-      // The plugin options are used as settings object for the ajax calls.
-      // The following are jQuery ajax settings required for the file uploads:
+      // The plugin options are used as setting object for the ajax calls.
+      // The following are jQuery ajax setting required for the file uploads:
       processData: false,
       contentType: false,
       cache: false,
@@ -444,7 +444,7 @@
 
     _initProgressListener: function (options) {
       var that = this,
-        xhr = options.xhr ? options.xhr() : $.ajaxSettings.xhr();
+        xhr = options.xhr ? options.xhr() : $.ajaxsetting.xhr();
       // Accesss to the native XHR object is required to add event listeners
       // for the upload progress event:
       if (xhr.upload) {
@@ -463,7 +463,7 @@
     },
 
     _deinitProgressListener: function (options) {
-      var xhr = options.xhr ? options.xhr() : $.ajaxSettings.xhr();
+      var xhr = options.xhr ? options.xhr() : $.ajaxsetting.xhr();
       if (xhr.upload) {
         $(xhr.upload).off('progress');
       }
@@ -587,7 +587,7 @@
       options.blob = null;
     },
 
-    _initIframeSettings: function (options) {
+    _initIframesetting: function (options) {
       var targetHost = $('<a></a>').prop('href', options.url).prop('host');
       // Setting the dataType to iframe enables the iframe transport:
       options.dataType = 'iframe ' + (options.dataType || '');
@@ -602,7 +602,7 @@
       }
     },
 
-    _initDataSettings: function (options) {
+    _initDatasetting: function (options) {
       if (this._isXHRUpload(options)) {
         if (!this._chunkedUpload(options, true)) {
           if (!options.data) {
@@ -616,7 +616,7 @@
           options.dataType = 'postmessage ' + (options.dataType || '');
         }
       } else {
-        this._initIframeSettings(options);
+        this._initIframesetting(options);
       }
     },
 
@@ -643,7 +643,7 @@
       return paramName;
     },
 
-    _initFormSettings: function (options) {
+    _initFormsetting: function (options) {
       // Retrieve missing options from the input field and the
       // associated form, if available:
       if (!options.form || !options.form.length) {
@@ -677,10 +677,10 @@
       }
     },
 
-    _getAJAXSettings: function (data) {
+    _getAJAXsetting: function (data) {
       var options = $.extend({}, this.options, data);
-      this._initFormSettings(options);
-      this._initDataSettings(options);
+      this._initFormsetting(options);
+      this._initDatasetting(options);
       return options;
     },
 
@@ -986,7 +986,7 @@
         aborted,
         slot,
         pipe,
-        options = that._getAJAXSettings(data),
+        options = that._getAJAXsetting(data),
         send = function () {
           that._sending += 1;
           // Set timer for bitrate progress calculation:

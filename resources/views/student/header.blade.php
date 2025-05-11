@@ -112,7 +112,7 @@
                                 class="bx bx-user fs-5"></i><span>Profile</span></a>
                     </li>
                     <li><a class="dropdown-item d-flex align-items-center" href="{{route('student.profile.setting')}}"><i
-                                class="bx bx-cog fs-5"></i><span>Settings</span></a>
+                                class="bx bx-cog fs-5"></i><span>setting</span></a>
                     </li>
 
                     <li>

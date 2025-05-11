@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as AuthUser;
 
 class AdminProfileController extends Controller
 {
-    public function settings()
+    public function setting()
     {
         return view('admin.profile.setting');
     }
@@ -20,41 +20,41 @@ class AdminProfileController extends Controller
 
     public function update(Request $request)
     {
-        /** @var \App\Models\User $user */
-        
-            $user = Auth::user();
-        
-            // Handle profile photo upload
-            $profilePhoto = $request->hasFile('photo') 
-                ? $request->file('photo')->store('profile_photos', 'public') 
-                : $user->profile_photo;
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'dob' => 'nullable|date',
+            'gender' => 'required|in:male,female,other',
+            'present_address' => 'nullable|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
+            'qualification' => 'nullable|string|max:255',
+            'graduation_institution' => 'nullable|string|max:255',
+            'experience' => 'nullable|string|max:255',
+            'specialization' => 'nullable|string|max:255',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-            // Fill admin-specific data
-            $user->fill([
-                'name' => $request->name,
-                'email' => $request->filled('email') ? $request->email : 'reazmd56@gmail.net', // Set default email
-                'phone' => $request->phone,
-                'dob' => $request->dob,
-                'gender' => $request->gender,
-                'present_address' => $request->present_address,
-                'permanent_address' => $request->permanent_address,
-                'school_name' => $request->school_name,
-                'class' => $request->class,
-                'subject_interest' => $request->subject_interest,
-                'learning_mode' => $request->learning_mode,
-                'profile_photo' => $profilePhoto,
-            ]);
-        
-            // If password is provided, update it
-            if ($request->filled('password')) {
-                $user->password = Hash::make($request->password);
+        $user = Auth::user();
+
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
             }
-        
-            $user->save();
-        
-            return redirect()->back()->with('success', 'Profile updated successfully.');
-        
+
+            $validated['profile_photo'] = $path;
+        }
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->update($validated);
+
+        return redirect()->back()->with('success', 'Profile updated successfully.');
     }
+
 
     public function updatePassword(Request $request)
     {

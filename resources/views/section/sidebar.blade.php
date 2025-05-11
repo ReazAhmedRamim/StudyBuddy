@@ -60,7 +60,7 @@
 
                 <div class="parent-icon"><i class="bx bx-category"></i>
                 </div>
-                <div class="menu-title">Application Settings</div>
+                <div class="menu-title">Application setting</div>
             </a>
             <ul>
 

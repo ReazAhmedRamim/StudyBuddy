@@ -50,11 +50,11 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
 
         // Merge the defaults and options passed.
-        SETTINGS = COMPONENT ? $.extend( true, {}, COMPONENT.defaults, OPTIONS ) : OPTIONS || {},
+        setting = COMPONENT ? $.extend( true, {}, COMPONENT.defaults, OPTIONS ) : OPTIONS || {},
 
 
-        // Merge the default classes with the settings classes.
-        CLASSES = $.extend( {}, PickerConstructor.klasses(), SETTINGS.klass ),
+        // Merge the default classes with the setting classes.
+        CLASSES = $.extend( {}, PickerConstructor.klasses(), setting.klass ),
 
 
         // The element node wrapper into a jQuery object.
@@ -94,14 +94,14 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 // Confirm focus state, convert into text input to remove UA stylings,
                 // and set as readonly to prevent keyboard popup.
                 ELEMENT.autofocus = ELEMENT == getActiveElement()
-                ELEMENT.readOnly = !SETTINGS.editable
-                SETTINGS.id = ELEMENT.id = ELEMENT.id || STATE.id
+                ELEMENT.readOnly = !setting.editable
+                setting.id = ELEMENT.id = ELEMENT.id || STATE.id
                 if ( ELEMENT.type != 'text' ) {
                     ELEMENT.type = 'text'
                 }
 
-                // Create a new picker component with the settings.
-                P.component = new COMPONENT(P, SETTINGS)
+                // Create a new picker component with the setting.
+                P.component = new COMPONENT(P, setting)
 
 
                 // Create the picker root and then prepare it.
@@ -115,7 +115,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
 
                 // If there’s a format for the hidden input element, create the element.
-                if ( SETTINGS.formatSubmit ) {
+                if ( setting.formatSubmit ) {
                     prepareElementHidden()
                 }
 
@@ -124,17 +124,17 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 prepareElement()
 
 
-                // Insert the hidden input as specified in the settings.
-                if ( SETTINGS.containerHidden ) $( SETTINGS.containerHidden ).append( P._hidden )
+                // Insert the hidden input as specified in the setting.
+                if ( setting.containerHidden ) $( setting.containerHidden ).append( P._hidden )
                 else $ELEMENT.after( P._hidden )
 
 
-                // Insert the root as specified in the settings.
-                if ( SETTINGS.container ) $( SETTINGS.container ).append( P.$root )
+                // Insert the root as specified in the setting.
+                if ( setting.container ) $( setting.container ).append( P.$root )
                 else $ELEMENT.after( P.$root )
 
 
-                // Bind the default component and settings events.
+                // Bind the default component and setting events.
                 P.on({
                     start: P.component.onStart,
                     render: P.component.onRender,
@@ -143,12 +143,12 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                     close: P.component.onClose,
                     set: P.component.onSet
                 }).on({
-                    start: SETTINGS.onStart,
-                    render: SETTINGS.onRender,
-                    stop: SETTINGS.onStop,
-                    open: SETTINGS.onOpen,
-                    close: SETTINGS.onClose,
-                    set: SETTINGS.onSet
+                    start: setting.onStart,
+                    render: setting.onRender,
+                    stop: setting.onStop,
+                    open: setting.onOpen,
+                    close: setting.onClose,
+                    set: setting.onSet
                 })
 
 
@@ -329,7 +329,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                             // On “enter”, if the highlighted item isn’t disabled, set the value and close.
                             else if ( !P.$root.find( '.' + CLASSES.highlighted ).hasClass( CLASSES.disabled ) ) {
                                 P.set( 'select', P.component.item.highlight )
-                                if ( SETTINGS.closeOnSelect ) {
+                                if ( setting.closeOnSelect ) {
                                     P.close( true )
                                 }
                             }
@@ -357,7 +357,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
                 // If we need to give focus, do it before changing states.
                 if ( giveFocus ) {
-                    if ( SETTINGS.editable ) {
+                    if ( setting.editable ) {
                         ELEMENT.focus()
                     }
                     else {
@@ -446,9 +446,9 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                         }
 
                         // Then, check to update the element value and broadcast a change.
-                        if ( ( thingItem == 'select' || thingItem == 'clear' ) && SETTINGS.updateInput ) {
+                        if ( ( thingItem == 'select' || thingItem == 'clear' ) && setting.updateInput ) {
                             $ELEMENT.
-                                val( thingItem == 'clear' ? '' : P.get( thingItem, SETTINGS.format ) ).
+                                val( thingItem == 'clear' ? '' : P.get( thingItem, setting.format ) ).
                                 trigger( 'change' )
                         }
                     }
@@ -634,7 +634,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
             // If there’s a `data-value`, update the value of the element.
             val( $ELEMENT.data('value') ?
-                P.get('select', SETTINGS.format) :
+                P.get('select', setting.format) :
                 ELEMENT.value
             ).
 
@@ -664,7 +664,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
 
         // Only bind keydown events if the element isn’t editable.
-        if ( !SETTINGS.editable ) {
+        if ( !setting.editable ) {
 
             $ELEMENT.
 
@@ -769,7 +769,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 // If something is picked, set `select` then close with focus.
                 else if ( !targetDisabled && 'pick' in targetData ) {
                     P.set( 'select', targetData.pick )
-                    if ( SETTINGS.closeOnSelect ) {
+                    if ( setting.closeOnSelect ) {
                         P.close( true )
                     }
                 }
@@ -777,7 +777,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
                 // If a “clear” button is pressed, empty the values and close with focus.
                 else if ( targetData.clear ) {
                     P.clear()
-                    if ( SETTINGS.closeOnClear ) {
+                    if ( setting.closeOnClear ) {
                         P.close( true )
                     }
                 }
@@ -798,14 +798,14 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
 
         var name
 
-        if ( SETTINGS.hiddenName === true ) {
+        if ( setting.hiddenName === true ) {
             name = ELEMENT.name
             ELEMENT.name = ''
         }
         else {
             name = [
-                typeof SETTINGS.hiddenPrefix == 'string' ? SETTINGS.hiddenPrefix : '',
-                typeof SETTINGS.hiddenSuffix == 'string' ? SETTINGS.hiddenSuffix : '_submit'
+                typeof setting.hiddenPrefix == 'string' ? setting.hiddenPrefix : '',
+                typeof setting.hiddenSuffix == 'string' ? setting.hiddenSuffix : '_submit'
             ]
             name = name[0] + ELEMENT.name + name[1]
         }
@@ -820,7 +820,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
             // If the element has a value, set the hidden value as well.
             (
                 $ELEMENT.data('value') || ELEMENT.value ?
-                    ' value="' + P.get('select', SETTINGS.formatSubmit) + '"' :
+                    ' value="' + P.get('select', setting.formatSubmit) + '"' :
                     ''
             ) +
             '>'
@@ -831,7 +831,7 @@ function PickerConstructor( ELEMENT, NAME, COMPONENT, OPTIONS ) {
             // If the value changes, update the hidden input with the correct format.
             on('change.' + STATE.id, function() {
                 P._hidden.value = ELEMENT.value ?
-                    P.get('select', SETTINGS.formatSubmit) :
+                    P.get('select', setting.formatSubmit) :
                     ''
             })
     }
