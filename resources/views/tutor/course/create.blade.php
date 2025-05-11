@@ -32,7 +32,7 @@
 
                     </div>
 
-                    <form class="row g-3" method="post" action="{{ route('tutor.course.store') }}"
+                    <form class="row g-3" method="post" action="{{ route('tutor.course.index') }}"
                         enctype="multipart/form-data">
                         @csrf
 
@@ -46,7 +46,7 @@
                             </div>
                         @endif
 
-                        <input type="hidden" name="instructor_id" value="{{ auth()->user()->id }}" />
+                        <input type="hidden" name="tutor_id" value="{{ auth()->user()->id }}" />
 
 
 
@@ -67,24 +67,6 @@
                                 placeholder="Enter the course title" value="{{ old('course_title') }}" required>
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="category" class="form-label">Choose Category</label>
-                            <select class="form-select" name="category_id" id="category"
-                                data-placeholder="Choose a category" required>
-                                <option value="" disabled selected>Select a category</option>
-                                @foreach ($all_categories as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="subcategory" class="form-label">Select SubCategory</label>
-                            <select class="form-select" name="subcategory_id" id="subcategory"
-                                data-placeholder="Choose a subcategory" required>
-                                <option value="" disabled selected>Select a subcategory</option>
-                            </select>
-                        </div>
 
 
                         <div class="col-md-6">
@@ -167,11 +149,11 @@
                         </div>
 
 
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <label for="duration" class="form-label">Course Duration (in hours)</label>
                             <input type="number" step="0.01" class="form-control" name="duration" id="duration"
                                 placeholder="Enter Course Duration" value="{{ old('duration') }}" />
-                        </div>
+                        </div> -->
 
 
                         <div class="col-md-12">
@@ -297,4 +279,18 @@
     </script>
 
     <script src="{{ asset('customjs/instructor/course.js') }}"></script>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                ckfinder: {
+                    uploadUrl: '{{ route('ckeditor.upload') }}?_token={{ csrf_token() }}'
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
 @endpush
