@@ -22583,8 +22583,8 @@
         }
       }
     }, {
-      key: "xySettings",
-      value: function xySettings() {
+      key: "xysetting",
+      value: function xysetting() {
         var xyRatios = null;
         var w = this.w;
 
@@ -23048,7 +23048,7 @@
 
       if (node.instance) return node.instance; // initialize variables
 
-      var element; // adopt with element-specific settings
+      var element; // adopt with element-specific setting
 
       if (node.nodeName == 'svg') {
         element = node.parentNode instanceof window.SVGElement ? new SVG.Nested() : new SVG.Doc();
@@ -27690,7 +27690,7 @@
       this.pointSelection = {isSelected: false};
       this.rectSelection = {isSelected: false};
 
-      // helper list with position settings of each type of point
+      // helper list with position setting of each type of point
       this.pointsList = {
         lt: [ 0, 0 ],
         rt: [ 'width', 0 ],
@@ -27702,7 +27702,7 @@
         l: [ 0, 'height' ]
       };
 
-      // helper function to get point coordinates based on settings above and an object (bbox in our case)
+      // helper function to get point coordinates based on setting above and an object (bbox in our case)
       this.pointCoord = function (setting, object, isPointCentered) {
         var coord = typeof setting !== 'string' ? setting : object[setting];
         // Top, bottom, right and left points are placed in the center of element width/height
@@ -27710,11 +27710,11 @@
       };
 
       this.pointCoords = function (point, object) {
-        var settings = this.pointsList[point];
+        var setting = this.pointsList[point];
 
         return {
-          x: this.pointCoord(settings[0], object, (point === 't' || point === 'b')),
-          y: this.pointCoord(settings[1], object, (point === 'r' || point === 'l'))
+          x: this.pointCoord(setting[0], object, (point === 't' || point === 'b')),
+          y: this.pointCoord(setting[1], object, (point === 'r' || point === 'l'))
         }
       };
   }
@@ -29020,7 +29020,7 @@
         this.formatters.heatmapLabelFormatters(); // We got plottable area here, next task would be to calculate axis areas
 
         this.dimensions.plotCoords();
-        var xyRatios = this.core.xySettings();
+        var xyRatios = this.core.xysetting();
         this.grid.createGridMask();
         var elGraph = this.core.plotChartType(ser, xyRatios);
         var dataLabels = new DataLabels(this);

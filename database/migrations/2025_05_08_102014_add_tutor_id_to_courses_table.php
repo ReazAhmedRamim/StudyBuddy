@@ -42,17 +42,17 @@ return new class extends Migration
     {
         Schema::table('courses', function (Blueprint $table) {
             if (Schema::hasColumn('courses', 'tutor_id')) {
-                $table->dropForeign(['tutor_id']);
+                // $table->dropForeign(['tutor_id']);
                 $table->dropColumn('tutor_id');
             }
-            if (Schema::hasColumn('courses', 'category_id')) {
-                $table->dropForeign(['category_id']);
-                $table->dropColumn('category_id');
-            }
-            if (Schema::hasColumn('courses', 'subcategory_id')) {
-                $table->dropForeign(['subcategory_id']);
-                $table->dropColumn('subcategory_id');
-            }
+            // if (Schema::hasColumn('courses', 'category_id')) {
+            //     $table->dropForeign(['category_id']);
+            //     $table->dropColumn('category_id');
+            // }
+            // if (Schema::hasColumn('courses', 'subcategory_id')) {
+            //     $table->dropForeign(['subcategory_id']);
+            //     $table->dropColumn('subcategory_id');
+            // }
         });
     }
 

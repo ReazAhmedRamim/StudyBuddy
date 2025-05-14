@@ -12,15 +12,18 @@ return new class extends Migration
     public function up()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->json('image')->nullable()->after('course_goals');
+            $table->enum('status', ['draft', 'active', 'archived'])->default('draft');
         });
     }
 
-    public function down()
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->dropColumn('image');
+            //
         });
     }
-
 };

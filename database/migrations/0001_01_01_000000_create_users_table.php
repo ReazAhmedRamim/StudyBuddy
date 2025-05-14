@@ -6,36 +6,51 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+
+            // Optional unique phone number (remove unique() if duplicates are allowed)
+            $table->string('phone', 20)->nullable()->unique();
+
             $table->date('dob')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->enum('user_type', ['student', 'tutor',"admin"]);
+
+            // Role and status
+            $table->enum('role', ['admin', 'tutor', 'student'])->default('student')->index();
+            $table->enum('approval_status', ['pending', 'approved', 'banned'])->default('pending')->index();
+          
+
+
+            // Common profile fields
             $table->text('present_address')->nullable();
             $table->text('permanent_address')->nullable();
             $table->string('profile_photo')->nullable();
             $table->string('student_id_card')->nullable();
             $table->string('education_certificate')->nullable();
             $table->string('nid_card')->nullable();
+
+            // Student-specific fields
             $table->string('school_name')->nullable();
-            $table->string('class')->nullable();
+            $table->string('class', 20)->nullable();
             $table->string('subject_interest')->nullable();
             $table->string('learning_mode')->nullable();
+
+            // Tutor-specific fields
             $table->string('qualification')->nullable();
             $table->string('graduation_institution')->nullable();
-            $table->string('experience')->nullable();
+            $table->string('experience', 100)->nullable();
             $table->string('specialization')->nullable();
             $table->string('teaching_mode')->nullable();
-            $table->string('password');
+
+            $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes(); // Enable soft deletes
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -54,13 +69,10 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

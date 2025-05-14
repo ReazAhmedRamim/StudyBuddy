@@ -13,6 +13,23 @@ class TutorController extends Controller
     {
         return view('tutor.dashboard.index');
     }
+    public function approve($id)
+    {
+        $tutor = Tutor::findOrFail($id);
+        $tutor->status = 'approved';
+        $tutor->save();
+
+        return back()->with('success', 'Tutor approved successfully.');
+    }
+
+    public function ban($id)
+    {
+        $tutor = Tutor::findOrFail($id);
+        $tutor->status = 'banned';
+        $tutor->save();
+
+        return back()->with('success', 'Tutor banned successfully.');
+    }
 
     public function destroy(Request $request): RedirectResponse
     {

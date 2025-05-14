@@ -104,7 +104,7 @@
                     <img src="{{asset('backend/assets/images/avatars/avatar-2.png')}}" class="user-img" alt="user avatar">
                     <div class="user-info">
                         <p class="user-name mb-0">{{auth()->user()->name}}</p>
-                        <p class="designattion mb-0">{{auth()->user()->user_type}}</p>
+                        <p class="designattion mb-0">{{auth()->user()->role}}</p>
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -112,7 +112,7 @@
                                 class="bx bx-user fs-5"></i><span>Profile</span></a>
                     </li>
                     <li><a class="dropdown-item d-flex align-items-center" href="{{route('tutor.profile.setting')}}"><i
-                                class="bx bx-cog fs-5"></i><span>Settings</span></a>
+                                class="bx bx-cog fs-5"></i><span>setting</span></a>
                     </li>
 
                     <li>

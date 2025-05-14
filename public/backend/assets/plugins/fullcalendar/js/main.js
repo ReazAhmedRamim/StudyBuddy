@@ -1171,7 +1171,7 @@ var FullCalendar = (function (exports) {
         };
     }
 
-    var EXTENDED_SETTINGS_AND_SEVERITIES = {
+    var EXTENDED_setting_AND_SEVERITIES = {
         week: 3,
         separator: 0,
         omitZeroMinute: 0,
@@ -1195,32 +1195,32 @@ var FullCalendar = (function (exports) {
     var LTR_RE = /\u200e/g; // control character
     var UTC_RE = /UTC|GMT/;
     var NativeFormatter = /** @class */ (function () {
-        function NativeFormatter(formatSettings) {
+        function NativeFormatter(formatsetting) {
             var standardDateProps = {};
-            var extendedSettings = {};
+            var extendedsetting = {};
             var severity = 0;
-            for (var name_1 in formatSettings) {
-                if (name_1 in EXTENDED_SETTINGS_AND_SEVERITIES) {
-                    extendedSettings[name_1] = formatSettings[name_1];
-                    severity = Math.max(EXTENDED_SETTINGS_AND_SEVERITIES[name_1], severity);
+            for (var name_1 in formatsetting) {
+                if (name_1 in EXTENDED_setting_AND_SEVERITIES) {
+                    extendedsetting[name_1] = formatsetting[name_1];
+                    severity = Math.max(EXTENDED_setting_AND_SEVERITIES[name_1], severity);
                 }
                 else {
-                    standardDateProps[name_1] = formatSettings[name_1];
+                    standardDateProps[name_1] = formatsetting[name_1];
                     if (name_1 in STANDARD_DATE_PROP_SEVERITIES) { // TODO: what about hour12? no severity
                         severity = Math.max(STANDARD_DATE_PROP_SEVERITIES[name_1], severity);
                     }
                 }
             }
             this.standardDateProps = standardDateProps;
-            this.extendedSettings = extendedSettings;
+            this.extendedsetting = extendedsetting;
             this.severity = severity;
             this.buildFormattingFunc = memoize(buildFormattingFunc);
         }
         NativeFormatter.prototype.format = function (date, context) {
-            return this.buildFormattingFunc(this.standardDateProps, this.extendedSettings, context)(date);
+            return this.buildFormattingFunc(this.standardDateProps, this.extendedsetting, context)(date);
         };
         NativeFormatter.prototype.formatRange = function (start, end, context, betterDefaultSeparator) {
-            var _a = this, standardDateProps = _a.standardDateProps, extendedSettings = _a.extendedSettings;
+            var _a = this, standardDateProps = _a.standardDateProps, extendedsetting = _a.extendedsetting;
             var diffSeverity = computeMarkerDiffSeverity(start.marker, end.marker, context.calendarSystem);
             if (!diffSeverity) {
                 return this.format(start, context);
@@ -1238,11 +1238,11 @@ var FullCalendar = (function (exports) {
                 return full0;
             }
             var partialDateProps = computePartialFormattingOptions(standardDateProps, biggestUnitForPartial);
-            var partialFormattingFunc = buildFormattingFunc(partialDateProps, extendedSettings, context);
+            var partialFormattingFunc = buildFormattingFunc(partialDateProps, extendedsetting, context);
             var partial0 = partialFormattingFunc(start);
             var partial1 = partialFormattingFunc(end);
             var insertion = findCommonInsertion(full0, partial0, full1, partial1);
-            var separator = extendedSettings.separator || betterDefaultSeparator || context.defaultSeparator || '';
+            var separator = extendedsetting.separator || betterDefaultSeparator || context.defaultSeparator || '';
             if (insertion) {
                 return insertion.before + partial0 + separator + partial1 + insertion.after;
             }
@@ -1266,30 +1266,30 @@ var FullCalendar = (function (exports) {
         };
         return NativeFormatter;
     }());
-    function buildFormattingFunc(standardDateProps, extendedSettings, context) {
+    function buildFormattingFunc(standardDateProps, extendedsetting, context) {
         var standardDatePropCnt = Object.keys(standardDateProps).length;
         if (standardDatePropCnt === 1 && standardDateProps.timeZoneName === 'short') {
             return function (date) {
                 return formatTimeZoneOffset(date.timeZoneOffset);
             };
         }
-        if (standardDatePropCnt === 0 && extendedSettings.week) {
+        if (standardDatePropCnt === 0 && extendedsetting.week) {
             return function (date) {
-                return formatWeekNumber(context.computeWeekNumber(date.marker), context.weekText, context.locale, extendedSettings.week);
+                return formatWeekNumber(context.computeWeekNumber(date.marker), context.weekText, context.locale, extendedsetting.week);
             };
         }
-        return buildNativeFormattingFunc(standardDateProps, extendedSettings, context);
+        return buildNativeFormattingFunc(standardDateProps, extendedsetting, context);
     }
-    function buildNativeFormattingFunc(standardDateProps, extendedSettings, context) {
+    function buildNativeFormattingFunc(standardDateProps, extendedsetting, context) {
         standardDateProps = __assign({}, standardDateProps); // copy
-        extendedSettings = __assign({}, extendedSettings); // copy
-        sanitizeSettings(standardDateProps, extendedSettings);
+        extendedsetting = __assign({}, extendedsetting); // copy
+        sanitizesetting(standardDateProps, extendedsetting);
         standardDateProps.timeZone = 'UTC'; // we leverage the only guaranteed timeZone for our UTC markers
         var normalFormat = new Intl.DateTimeFormat(context.locale.codes, standardDateProps);
         var zeroFormat; // needed?
-        if (extendedSettings.omitZeroMinute) {
+        if (extendedsetting.omitZeroMinute) {
             var zeroProps = __assign({}, standardDateProps);
-            delete zeroProps.minute; // seconds and ms were already considered in sanitizeSettings
+            delete zeroProps.minute; // seconds and ms were already considered in sanitizesetting
             zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps);
         }
         return function (date) {
@@ -1302,10 +1302,10 @@ var FullCalendar = (function (exports) {
                 format = normalFormat;
             }
             var s = format.format(marker);
-            return postProcess(s, date, standardDateProps, extendedSettings, context);
+            return postProcess(s, date, standardDateProps, extendedsetting, context);
         };
     }
-    function sanitizeSettings(standardDateProps, extendedSettings) {
+    function sanitizesetting(standardDateProps, extendedsetting) {
         // deal with a browser inconsistency where formatting the timezone
         // requires that the hour/minute be present.
         if (standardDateProps.timeZoneName) {
@@ -1321,39 +1321,39 @@ var FullCalendar = (function (exports) {
             standardDateProps.timeZoneName = 'short';
         }
         // if requesting to display seconds, MUST display minutes
-        if (extendedSettings.omitZeroMinute && (standardDateProps.second || standardDateProps.millisecond)) {
-            delete extendedSettings.omitZeroMinute;
+        if (extendedsetting.omitZeroMinute && (standardDateProps.second || standardDateProps.millisecond)) {
+            delete extendedsetting.omitZeroMinute;
         }
     }
-    function postProcess(s, date, standardDateProps, extendedSettings, context) {
+    function postProcess(s, date, standardDateProps, extendedsetting, context) {
         s = s.replace(LTR_RE, ''); // remove left-to-right control chars. do first. good for other regexes
         if (standardDateProps.timeZoneName === 'short') {
             s = injectTzoStr(s, (context.timeZone === 'UTC' || date.timeZoneOffset == null) ?
                 'UTC' : // important to normalize for IE, which does "GMT"
                 formatTimeZoneOffset(date.timeZoneOffset));
         }
-        if (extendedSettings.omitCommas) {
+        if (extendedsetting.omitCommas) {
             s = s.replace(COMMA_RE, '').trim();
         }
-        if (extendedSettings.omitZeroMinute) {
+        if (extendedsetting.omitZeroMinute) {
             s = s.replace(':00', ''); // zeroFormat doesn't always achieve this
         }
         // ^ do anything that might create adjacent spaces before this point,
         // because MERIDIEM_RE likes to eat up loading spaces
-        if (extendedSettings.meridiem === false) {
+        if (extendedsetting.meridiem === false) {
             s = s.replace(MERIDIEM_RE, '').trim();
         }
-        else if (extendedSettings.meridiem === 'narrow') { // a/p
+        else if (extendedsetting.meridiem === 'narrow') { // a/p
             s = s.replace(MERIDIEM_RE, function (m0, m1) {
                 return m1.toLocaleLowerCase();
             });
         }
-        else if (extendedSettings.meridiem === 'short') { // am/pm
+        else if (extendedsetting.meridiem === 'short') { // am/pm
             s = s.replace(MERIDIEM_RE, function (m0, m1) {
                 return m1.toLocaleLowerCase() + 'm';
             });
         }
-        else if (extendedSettings.meridiem === 'lowercase') { // other meridiem transformers already converted to lowercase
+        else if (extendedsetting.meridiem === 'lowercase') { // other meridiem transformers already converted to lowercase
             s = s.replace(MERIDIEM_RE, function (m0) {
                 return m0.toLocaleLowerCase();
             });
@@ -1918,7 +1918,7 @@ var FullCalendar = (function (exports) {
         }
     }
 
-    // TODO: better called "EventSettings" or "EventConfig"
+    // TODO: better called "Eventsetting" or "EventConfig"
     // TODO: move this file into structs
     // TODO: separate constraint/overlap/allow, because selection uses only that, not other props
     var EVENT_UI_REFINERS = {
@@ -3062,10 +3062,10 @@ var FullCalendar = (function (exports) {
             var dateEnv = this.getCurrentData().dateEnv;
             return dateEnv.format(dateEnv.createMarker(d), createFormatter(formatter));
         };
-        // `settings` is for formatter AND isEndExclusive
-        CalendarApi.prototype.formatRange = function (d0, d1, settings) {
+        // `setting` is for formatter AND isEndExclusive
+        CalendarApi.prototype.formatRange = function (d0, d1, setting) {
             var dateEnv = this.getCurrentData().dateEnv;
-            return dateEnv.formatRange(dateEnv.createMarker(d0), dateEnv.createMarker(d1), createFormatter(settings), settings);
+            return dateEnv.formatRange(dateEnv.createMarker(d0), dateEnv.createMarker(d1), createFormatter(setting), setting);
         };
         CalendarApi.prototype.formatIso = function (d, omitTime) {
             var dateEnv = this.getCurrentData().dateEnv;
@@ -3628,8 +3628,8 @@ var FullCalendar = (function (exports) {
             enumerable: false,
             configurable: true
         });
-        EventApi.prototype.toPlainObject = function (settings) {
-            if (settings === void 0) { settings = {}; }
+        EventApi.prototype.toPlainObject = function (setting) {
+            if (setting === void 0) { setting = {}; }
             var def = this._def;
             var ui = def.ui;
             var _a = this, startStr = _a.startStr, endStr = _a.endStr;
@@ -3657,7 +3657,7 @@ var FullCalendar = (function (exports) {
             }
             // TODO: what about recurring-event properties???
             // TODO: include startEditable/durationEditable/constraint/overlap/allow
-            if (settings.collapseColor && ui.backgroundColor && ui.backgroundColor === ui.borderColor) {
+            if (setting.collapseColor && ui.backgroundColor && ui.backgroundColor === ui.borderColor) {
                 res.color = ui.backgroundColor;
             }
             else {
@@ -3675,7 +3675,7 @@ var FullCalendar = (function (exports) {
                 res.classNames = ui.classNames;
             }
             if (Object.keys(def.extendedProps).length) {
-                if (settings.collapseExtendedProps) {
+                if (setting.collapseExtendedProps) {
                     __assign(res, def.extendedProps);
                 }
                 else {
@@ -3764,30 +3764,30 @@ var FullCalendar = (function (exports) {
     }
 
     var DateEnv = /** @class */ (function () {
-        function DateEnv(settings) {
-            var timeZone = this.timeZone = settings.timeZone;
+        function DateEnv(setting) {
+            var timeZone = this.timeZone = setting.timeZone;
             var isNamedTimeZone = timeZone !== 'local' && timeZone !== 'UTC';
-            if (settings.namedTimeZoneImpl && isNamedTimeZone) {
-                this.namedTimeZoneImpl = new settings.namedTimeZoneImpl(timeZone);
+            if (setting.namedTimeZoneImpl && isNamedTimeZone) {
+                this.namedTimeZoneImpl = new setting.namedTimeZoneImpl(timeZone);
             }
             this.canComputeOffset = Boolean(!isNamedTimeZone || this.namedTimeZoneImpl);
-            this.calendarSystem = createCalendarSystem(settings.calendarSystem);
-            this.locale = settings.locale;
-            this.weekDow = settings.locale.week.dow;
-            this.weekDoy = settings.locale.week.doy;
-            if (settings.weekNumberCalculation === 'ISO') {
+            this.calendarSystem = createCalendarSystem(setting.calendarSystem);
+            this.locale = setting.locale;
+            this.weekDow = setting.locale.week.dow;
+            this.weekDoy = setting.locale.week.doy;
+            if (setting.weekNumberCalculation === 'ISO') {
                 this.weekDow = 1;
                 this.weekDoy = 4;
             }
-            if (typeof settings.firstDay === 'number') {
-                this.weekDow = settings.firstDay;
+            if (typeof setting.firstDay === 'number') {
+                this.weekDow = setting.firstDay;
             }
-            if (typeof settings.weekNumberCalculation === 'function') {
-                this.weekNumberFunc = settings.weekNumberCalculation;
+            if (typeof setting.weekNumberCalculation === 'function') {
+                this.weekNumberFunc = setting.weekNumberCalculation;
             }
-            this.weekText = settings.weekText != null ? settings.weekText : settings.locale.options.weekText;
-            this.cmdFormatter = settings.cmdFormatter;
-            this.defaultSeparator = settings.defaultSeparator;
+            this.weekText = setting.weekText != null ? setting.weekText : setting.locale.options.weekText;
+            this.cmdFormatter = setting.cmdFormatter;
+            this.defaultSeparator = setting.defaultSeparator;
         }
         // Creating / Parsing
         DateEnv.prototype.createMarker = function (input) {
@@ -4186,7 +4186,7 @@ var FullCalendar = (function (exports) {
             forcedTzo: dateMeta.forcedTzo
         });
     }
-    function formatRange(startInput, endInput, options // mixture of env and formatter settings
+    function formatRange(startInput, endInput, options // mixture of env and formatter setting
     ) {
         var dateEnv = buildDateEnv(typeof options === 'object' && options ? options : {}); // pass in if non-null object
         var formatter = createFormatter(options);
@@ -4203,9 +4203,9 @@ var FullCalendar = (function (exports) {
         });
     }
     // TODO: more DRY and optimized
-    function buildDateEnv(settings) {
-        var locale = buildLocale(settings.locale || 'en', organizeRawLocales([]).map); // TODO: don't hardcode 'en' everywhere
-        return new DateEnv(__assign(__assign({ timeZone: BASE_OPTION_DEFAULTS.timeZone, calendarSystem: 'gregory' }, settings), { locale: locale }));
+    function buildDateEnv(setting) {
+        var locale = buildLocale(setting.locale || 'en', organizeRawLocales([]).map); // TODO: don't hardcode 'en' everywhere
+        return new DateEnv(__assign(__assign({ timeZone: BASE_OPTION_DEFAULTS.timeZone, calendarSystem: 'gregory' }, setting), { locale: locale }));
     }
 
     var DEF_DEFAULTS = {
@@ -5687,7 +5687,7 @@ var FullCalendar = (function (exports) {
             theComponent = superDef.component;
         }
         if (!theComponent) {
-            return null; // don't throw a warning, might be settings for a single-unit view
+            return null; // don't throw a warning, might be setting for a single-unit view
         }
         return {
             type: viewType,
@@ -7557,28 +7557,28 @@ var FullCalendar = (function (exports) {
     }());
 
     var Interaction = /** @class */ (function () {
-        function Interaction(settings) {
-            this.component = settings.component;
+        function Interaction(setting) {
+            this.component = setting.component;
         }
         Interaction.prototype.destroy = function () {
         };
         return Interaction;
     }());
-    function parseInteractionSettings(component, input) {
+    function parseInteractionsetting(component, input) {
         return {
             component: component,
             el: input.el,
             useEventCenter: input.useEventCenter != null ? input.useEventCenter : true
         };
     }
-    function interactionSettingsToStore(settings) {
+    function interactionsettingToStore(setting) {
         var _a;
         return _a = {},
-            _a[settings.component.uid] = settings,
+            _a[setting.component.uid] = setting,
             _a;
     }
     // global state
-    var interactionSettingsStore = {};
+    var interactionsettingStore = {};
 
     /*
     An abstraction for a dragging interaction originating on an event.
@@ -7788,8 +7788,8 @@ var FullCalendar = (function (exports) {
     */
     var EventClicking = /** @class */ (function (_super) {
         __extends(EventClicking, _super);
-        function EventClicking(settings) {
-            var _this = _super.call(this, settings) || this;
+        function EventClicking(setting) {
+            var _this = _super.call(this, setting) || this;
             _this.handleSegClick = function (ev, segEl) {
                 var component = _this.component;
                 var context = component.context;
@@ -7811,7 +7811,7 @@ var FullCalendar = (function (exports) {
                     }
                 }
             };
-            _this.destroy = listenBySelector(settings.el, 'click', '.fc-event', // on both fg and bg events
+            _this.destroy = listenBySelector(setting.el, 'click', '.fc-event', // on both fg and bg events
             _this.handleSegClick);
             return _this;
         }
@@ -7824,8 +7824,8 @@ var FullCalendar = (function (exports) {
     */
     var EventHovering = /** @class */ (function (_super) {
         __extends(EventHovering, _super);
-        function EventHovering(settings) {
-            var _this = _super.call(this, settings) || this;
+        function EventHovering(setting) {
+            var _this = _super.call(this, setting) || this;
             // for simulating an eventMouseLeave when the event el is destroyed while mouse is over it
             _this.handleEventElRemove = function (el) {
                 if (el === _this.currentSegEl) {
@@ -7844,7 +7844,7 @@ var FullCalendar = (function (exports) {
                     _this.triggerEvent('eventMouseLeave', ev, segEl);
                 }
             };
-            _this.removeHoverListeners = listenToHoverBySelector(settings.el, '.fc-event', // on both fg and bg events
+            _this.removeHoverListeners = listenToHoverBySelector(setting.el, '.fc-event', // on both fg and bg events
             _this.handleSegEnter, _this.handleSegLeave);
             return _this;
         }
@@ -7880,18 +7880,18 @@ var FullCalendar = (function (exports) {
             _this.interactionsStore = {};
             // Component Registration
             // -----------------------------------------------------------------------------------------------------------------
-            _this.registerInteractiveComponent = function (component, settingsInput) {
-                var settings = parseInteractionSettings(component, settingsInput);
+            _this.registerInteractiveComponent = function (component, settingInput) {
+                var setting = parseInteractionsetting(component, settingInput);
                 var DEFAULT_INTERACTIONS = [
                     EventClicking,
                     EventHovering
                 ];
                 var interactionClasses = DEFAULT_INTERACTIONS.concat(_this.props.pluginHooks.componentInteractions);
                 var interactions = interactionClasses.map(function (interactionClass) {
-                    return new interactionClass(settings);
+                    return new interactionClass(setting);
                 });
                 _this.interactionsStore[component.uid] = interactions;
-                interactionSettingsStore[component.uid] = settings;
+                interactionsettingStore[component.uid] = setting;
             };
             _this.unregisterInteractiveComponent = function (component) {
                 for (var _i = 0, _a = _this.interactionsStore[component.uid]; _i < _a.length; _i++) {
@@ -7899,7 +7899,7 @@ var FullCalendar = (function (exports) {
                     listener.destroy();
                 }
                 delete _this.interactionsStore[component.uid];
-                delete interactionSettingsStore[component.uid];
+                delete interactionsettingStore[component.uid];
             };
             // Resizing
             // -----------------------------------------------------------------------------------------------------------------
@@ -10248,9 +10248,9 @@ var FullCalendar = (function (exports) {
             }
         };
         HitDragging.prototype.prepareHits = function () {
-            this.offsetTrackers = mapHash(this.droppableStore, function (interactionSettings) {
-                interactionSettings.component.prepareHits();
-                return new OffsetTracker(interactionSettings.el);
+            this.offsetTrackers = mapHash(this.droppableStore, function (interactionsetting) {
+                interactionsetting.component.prepareHits();
+                return new OffsetTracker(interactionsetting.el);
             });
         };
         HitDragging.prototype.releaseHits = function () {
@@ -10333,8 +10333,8 @@ var FullCalendar = (function (exports) {
     */
     var DateClicking = /** @class */ (function (_super) {
         __extends(DateClicking, _super);
-        function DateClicking(settings) {
-            var _this = _super.call(this, settings) || this;
+        function DateClicking(setting) {
+            var _this = _super.call(this, setting) || this;
             _this.handlePointerDown = function (pev) {
                 var dragging = _this.dragging;
                 var downEl = pev.origEvent.target;
@@ -10355,9 +10355,9 @@ var FullCalendar = (function (exports) {
                 }
             };
             // we DO want to watch pointer moves because otherwise finalHit won't get populated
-            _this.dragging = new FeaturefulElementDragging(settings.el);
+            _this.dragging = new FeaturefulElementDragging(setting.el);
             _this.dragging.autoScroller.isEnabled = false;
-            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionSettingsToStore(settings));
+            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionsettingToStore(setting));
             hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
             hitDragging.emitter.on('dragend', _this.handleDragEnd);
             return _this;
@@ -10374,8 +10374,8 @@ var FullCalendar = (function (exports) {
     */
     var DateSelecting = /** @class */ (function (_super) {
         __extends(DateSelecting, _super);
-        function DateSelecting(settings) {
-            var _this = _super.call(this, settings) || this;
+        function DateSelecting(setting) {
+            var _this = _super.call(this, setting) || this;
             _this.dragSelection = null;
             _this.handlePointerDown = function (ev) {
                 var _a = _this, component = _a.component, dragging = _a.dragging;
@@ -10424,13 +10424,13 @@ var FullCalendar = (function (exports) {
                     _this.dragSelection = null;
                 }
             };
-            var component = settings.component;
+            var component = setting.component;
             var options = component.context.options;
-            var dragging = _this.dragging = new FeaturefulElementDragging(settings.el);
+            var dragging = _this.dragging = new FeaturefulElementDragging(setting.el);
             dragging.touchScrollAllowed = false;
             dragging.minDistance = options.selectMinDistance || 0;
             dragging.autoScroller.isEnabled = options.dragScroll;
-            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionSettingsToStore(settings));
+            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionsettingToStore(setting));
             hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
             hitDragging.emitter.on('dragstart', _this.handleDragStart);
             hitDragging.emitter.on('hitupdate', _this.handleHitUpdate);
@@ -10478,8 +10478,8 @@ var FullCalendar = (function (exports) {
 
     var EventDragging = /** @class */ (function (_super) {
         __extends(EventDragging, _super);
-        function EventDragging(settings) {
-            var _this = _super.call(this, settings) || this;
+        function EventDragging(setting) {
+            var _this = _super.call(this, setting) || this;
             // internal state
             _this.subjectEl = null;
             _this.subjectSeg = null; // the seg being selected/dragged
@@ -10705,12 +10705,12 @@ var FullCalendar = (function (exports) {
             };
             var component = _this.component;
             var options = component.context.options;
-            var dragging = _this.dragging = new FeaturefulElementDragging(settings.el);
+            var dragging = _this.dragging = new FeaturefulElementDragging(setting.el);
             dragging.pointer.selector = EventDragging.SELECTOR;
             dragging.touchScrollAllowed = false;
             dragging.autoScroller.isEnabled = options.dragScroll;
-            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionSettingsStore);
-            hitDragging.useSubjectCenter = settings.useEventCenter;
+            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionsettingStore);
+            hitDragging.useSubjectCenter = setting.useEventCenter;
             hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
             hitDragging.emitter.on('dragstart', _this.handleDragStart);
             hitDragging.emitter.on('hitupdate', _this.handleHitUpdate);
@@ -10815,8 +10815,8 @@ var FullCalendar = (function (exports) {
 
     var EventResizing = /** @class */ (function (_super) {
         __extends(EventResizing, _super);
-        function EventResizing(settings) {
-            var _this = _super.call(this, settings) || this;
+        function EventResizing(setting) {
+            var _this = _super.call(this, setting) || this;
             // internal state
             _this.draggingSegEl = null;
             _this.draggingSeg = null; // TODO: rename to resizingSeg? subjectSeg?
@@ -10940,12 +10940,12 @@ var FullCalendar = (function (exports) {
                 _this.validMutation = null;
                 // okay to keep eventInstance around. useful to set it in handlePointerDown
             };
-            var component = settings.component;
-            var dragging = _this.dragging = new FeaturefulElementDragging(settings.el);
+            var component = setting.component;
+            var dragging = _this.dragging = new FeaturefulElementDragging(setting.el);
             dragging.pointer.selector = '.fc-event-resizer';
             dragging.touchScrollAllowed = false;
             dragging.autoScroller.isEnabled = component.context.options.dragScroll;
-            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionSettingsToStore(settings));
+            var hitDragging = _this.hitDragging = new HitDragging(_this.dragging, interactionsettingToStore(setting));
             hitDragging.emitter.on('pointerdown', _this.handlePointerDown);
             hitDragging.emitter.on('dragstart', _this.handleDragStart);
             hitDragging.emitter.on('hitupdate', _this.handleHitUpdate);
@@ -11152,7 +11152,7 @@ var FullCalendar = (function (exports) {
                 _this.receivingContext = null;
                 _this.droppableEvent = null;
             };
-            var hitDragging = this.hitDragging = new HitDragging(dragging, interactionSettingsStore);
+            var hitDragging = this.hitDragging = new HitDragging(dragging, interactionsettingStore);
             hitDragging.requireInitial = false; // will start outside of a component
             hitDragging.emitter.on('dragstart', this.handleDragStart);
             hitDragging.emitter.on('hitupdate', this.handleHitUpdate);
@@ -11241,12 +11241,12 @@ var FullCalendar = (function (exports) {
     Leverages FullCalendar's internal drag-n-drop functionality WITHOUT a third-party drag system.
     */
     var ExternalDraggable = /** @class */ (function () {
-        function ExternalDraggable(el, settings) {
+        function ExternalDraggable(el, setting) {
             var _this = this;
-            if (settings === void 0) { settings = {}; }
+            if (setting === void 0) { setting = {}; }
             this.handlePointerDown = function (ev) {
                 var dragging = _this.dragging;
-                var _a = _this.settings, minDistance = _a.minDistance, longPressDelay = _a.longPressDelay;
+                var _a = _this.setting, minDistance = _a.minDistance, longPressDelay = _a.longPressDelay;
                 dragging.minDistance =
                     minDistance != null ?
                         minDistance :
@@ -11263,18 +11263,18 @@ var FullCalendar = (function (exports) {
                     _this.dragging.mirror.getMirrorEl().classList.add('fc-event-selected');
                 }
             };
-            this.settings = settings;
+            this.setting = setting;
             var dragging = this.dragging = new FeaturefulElementDragging(el);
             dragging.touchScrollAllowed = false;
-            if (settings.itemSelector != null) {
-                dragging.pointer.selector = settings.itemSelector;
+            if (setting.itemSelector != null) {
+                dragging.pointer.selector = setting.itemSelector;
             }
-            if (settings.appendTo != null) {
-                dragging.mirror.parentNode = settings.appendTo; // TODO: write tests
+            if (setting.appendTo != null) {
+                dragging.mirror.parentNode = setting.appendTo; // TODO: write tests
             }
             dragging.emitter.on('pointerdown', this.handlePointerDown);
             dragging.emitter.on('dragstart', this.handleDragStart);
-            new ExternalElementDragging(dragging, settings.eventData);
+            new ExternalElementDragging(dragging, setting.eventData);
         }
         ExternalDraggable.prototype.destroy = function () {
             this.dragging.destroy();
@@ -11353,29 +11353,29 @@ var FullCalendar = (function (exports) {
     Must be instantiated and destroyed by caller.
     */
     var ThirdPartyDraggable = /** @class */ (function () {
-        function ThirdPartyDraggable(containerOrSettings, settings) {
+        function ThirdPartyDraggable(containerOrsetting, setting) {
             var containerEl = document;
             if (
             // wish we could just test instanceof EventTarget, but doesn't work in IE11
-            containerOrSettings === document ||
-                containerOrSettings instanceof Element) {
-                containerEl = containerOrSettings;
-                settings = settings || {};
+            containerOrsetting === document ||
+                containerOrsetting instanceof Element) {
+                containerEl = containerOrsetting;
+                setting = setting || {};
             }
             else {
-                settings = (containerOrSettings || {});
+                setting = (containerOrsetting || {});
             }
             var dragging = this.dragging = new InferredElementDragging(containerEl);
-            if (typeof settings.itemSelector === 'string') {
-                dragging.pointer.selector = settings.itemSelector;
+            if (typeof setting.itemSelector === 'string') {
+                dragging.pointer.selector = setting.itemSelector;
             }
             else if (containerEl === document) {
                 dragging.pointer.selector = '[data-event]';
             }
-            if (typeof settings.mirrorSelector === 'string') {
-                dragging.mirrorSelector = settings.mirrorSelector;
+            if (typeof setting.mirrorSelector === 'string') {
+                dragging.mirrorSelector = setting.mirrorSelector;
             }
-            new ExternalElementDragging(dragging, settings.eventData);
+            new ExternalElementDragging(dragging, setting.eventData);
         }
         ThirdPartyDraggable.prototype.destroy = function () {
             this.dragging.destroy();
@@ -14355,8 +14355,8 @@ var FullCalendar = (function (exports) {
     exports.hasBgRendering = hasBgRendering;
     exports.hasShrinkWidth = hasShrinkWidth;
     exports.identity = identity;
-    exports.interactionSettingsStore = interactionSettingsStore;
-    exports.interactionSettingsToStore = interactionSettingsToStore;
+    exports.interactionsettingStore = interactionsettingStore;
+    exports.interactionsettingToStore = interactionsettingToStore;
     exports.intersectRanges = intersectRanges;
     exports.intersectRects = intersectRects;
     exports.isArraysEqual = isArraysEqual;

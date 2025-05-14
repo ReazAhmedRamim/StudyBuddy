@@ -25,7 +25,7 @@
                 <div class="col-lg-8">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h4 class="card-title mb-4">List of Users</h4>
+                            <h4 class="card-title mb-4">List of Students</h4>
 
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover align-middle mb-0">

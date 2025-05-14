@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
             'phone'                 => '1234567890',
             'dob'                   => '1980-01-01',
             'gender'                => 'other',
-            'user_type'             => 'admin',
+            'role'             => 'admin',
             'present_address'       => '123 Main St',
             'permanent_address'     => '456 Elm St',
             'profile_photo'         => null,

@@ -57,7 +57,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Register As</label>
-              <select id="userType" name="user_type" class="form-select" required>
+              <select id="userType" name="role" class="form-select" required>
                 <option value="" disabled selected>Select user type</option>
                 <option value="student">Student</option>
                 <option value="tutor">Tutor</option>

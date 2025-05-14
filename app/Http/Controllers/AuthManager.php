@@ -9,67 +9,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 
-use function Pest\Laravel\session;
-
 class AuthManager extends Controller
 {
-    function login(){
-        return view('login');
-    }
-
-    function registration(){
+    public function registration()
+    {
         return view('registration');
     }
-
-    function student(){
-        return view('student');
-    }
-
-    function tutor(){
-        $tutor = Auth::user();
-        return view('tutor.dashboard.index',compact('tutor'));
-    }
-
-    function admin(){
-        $admin = Auth::user();
-        return view('admin',compact('admin'));
-    }
-
-    function loginPost(Request $request){
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
     
-        $credentials = $request->only('email','password');
     
-        if(Auth::attempt($credentials)){
-            $user = Auth::user();
     
-            if ($user->user_type === 'student') {
-                return redirect()->intended(route('student')); // change route name as needed
-            } elseif ($user->user_type === 'tutor') {
-                return redirect()->intended(route('tutor')); // change route name as needed
-            } elseif ($user->user_type === 'admin') {
-                return redirect()->intended(route('admin')); // change route name as needed
-            } 
-            else {
-                Auth::logout();
-                return redirect(route('login'))->with("error", "User type not recognized.");
-            }
-        }
-    
-        return redirect(route('login'))->with("error","Your login details are not valid");
-    }
-
-    function registrationPost(Request $request){
+    public function registrationPost(Request $request)
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone' => 'required|string|max:15',
             'dob' => 'required|date',
             'gender' => 'required|in:male,female,other',
-            'user_type' => 'required|in:student,tutor',
+            'role' => 'required|in:student,tutor',
             'present_address' => 'required|string|max:255',
             'permanent_address' => 'required|string|max:255',
             'profile_photo' => 'required|image|mimes:jpg,png,jpeg|max:2048',
@@ -78,17 +35,17 @@ class AuthManager extends Controller
             'education_certificate' => 'nullable|mimes:pdf,jpg,png,jpeg|max:2048',
             'nid_card' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
-        // Handle file uploads
+
         $profilePhoto = $request->file('profile_photo')->store('public/profile_photos');
 
         $studentIdCard = null;
-        if ($request->user_type === 'student' && $request->hasFile('student_id_card')) {
+        if ($request->role === 'student' && $request->hasFile('student_id_card')) {
             $studentIdCard = $request->file('student_id_card')->store('public/student_id_cards');
         }
 
         $educationCertificate = null;
         $nidCard = null;
-        if ($request->user_type === 'tutor') {
+        if ($request->role === 'tutor') {
             if ($request->hasFile('education_certificate')) {
                 $educationCertificate = $request->file('education_certificate')->store('public/education_certificates');
             }
@@ -97,14 +54,13 @@ class AuthManager extends Controller
             }
         }
 
-        // Create the user
         $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'dob' => $request->dob,
             'gender' => $request->gender,
-            'user_type' => $request->user_type,
+            'role' => $request->role,
             'present_address' => $request->present_address,
             'permanent_address' => $request->permanent_address,
             'profile_photo' => $profilePhoto,
@@ -112,46 +68,83 @@ class AuthManager extends Controller
             'education_certificate' => $educationCertificate,
             'nid_card' => $nidCard,
             'password' => Hash::make($request->password),
+            'approval_status' => User::STATUS_PENDING,
         ];
-        
-        // Student-specific
-        if ($request->user_type === 'student') {
+
+        if ($request->role === 'student') {
             $userData['school_name'] = $request->school_name;
             $userData['class'] = $request->class;
             $userData['subject_interest'] = $request->subject_interest;
             $userData['learning_mode'] = $request->learning_mode;
         }
-        
-        // Tutor-specific
-        if ($request->user_type === 'tutor') {
+
+        if ($request->role === 'tutor') {
             $userData['qualification'] = $request->qualification;
             $userData['graduation_institution'] = $request->graduation_institution;
             $userData['experience'] = $request->experience;
             $userData['specialization'] = $request->specialization;
             $userData['teaching_mode'] = $request->teaching_mode;
         }
-        
-        // Finally, create the user
-        $user = User::create($userData);
-        
 
-        return redirect()->route('login')->with('success', 'Registration successful! Login to see your profile.');
+        User::create($userData);
 
+        return redirect()->route('login')->with('success', 'Registration successful! Please wait for admin approval.');
     }
 
-    function logout()
-{
-    // // @phpstan-ignore-next-line
-    // session()->flush();
+   
 
-    
-    // Log out the user from the Auth system
-    Auth::logout();
-    
-    // Redirect to the login page
-    return redirect()->route('login');
-}
+    public function login()
+    {
+        return view('login'); // Matches resources/views/login.blade.php
+    }
 
-    
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            // Check if user is approved
+            if ($user->approval_status !== User::STATUS_APPROVED) {
+                Auth::logout(); // Log them out immediately
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Your account is pending approval by the admin.',
+                ]);
+            }
+
+            $request->session()->regenerate();
+
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->isTutor()) {
+                return redirect()->route('tutor.dashboard');
+            } elseif ($user->isStudent()) {
+                return redirect()->route('student.dashboard');
+            }
+
+            Auth::logout(); // fallback: logout if no matching role
+            return redirect()->route('login')->withErrors([
+                'email' => 'Unauthorized role.',
+            ]);
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
+
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
 }

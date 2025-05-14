@@ -20,6 +20,8 @@ return new class extends Migration
             $table->text('course_title')->nullable();
             $table->text('course_name')->nullable();
             $table->string('course_name_slug')->nullable();
+            $table->string('image')->nullable(); // ✅ Allows no image
+
 
             $table->longText('description')->nullable();
             $table->string('video_url')->nullable();
