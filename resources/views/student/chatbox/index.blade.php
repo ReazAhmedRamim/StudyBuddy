@@ -5,12 +5,12 @@
 <div class="page-content">
     <!-- Breadcrumb -->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">student Profile</div>
+        <div class="breadcrumb-title pe-3">Student Profile</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item"><a href="#"><i class="bx bx-home-alt"></i></a></li>
-                    <li class="breadcrumb-item active" aria-current="page">student Profile</li>
+                    <li class="breadcrumb-item active" aria-current="page">Chatbox</li>
                 </ol>
             </nav>
         </div>
@@ -34,7 +34,7 @@
                                             <th style="width: 50px;">#</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th style="width: 120px;">Action</th>
+                                            <th style="width: 120px;">Chat</th>
                                         </tr>
                                     </thead>
                                     <tbody>

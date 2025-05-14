@@ -18,7 +18,6 @@
 
         <!--start page wrapper -->
         <div class="page-wrapper">
-
             @yield('content')
 
         </div>
@@ -26,7 +25,6 @@
 
 
        @include('section.footer')
-
 
 
     </div>

@@ -31,26 +31,6 @@
 
         
 
-        @if(isApprovedUser())
-
-       
-
-        <li class="{{ setSidebar(['student.course*', 'student.course-section*']) }}">
-            <a href="javascript:;" class="has-arrow">
-                <div class="parent-icon"><i class="bx bx-category"></i>
-                </div>
-                <div class="menu-title">Manage Courses</div>
-            </a>
-            <ul>
-                <li class="{{ setSidebar(['student.course*', 'student.course-section']) }}">
-                    <a href="{{route('student.course.index')}}"><i class='bx bx-radio-circle'></i>All Course</a>
-                </li>
-
-            </ul>
-        </li>
-
-        @endif
-
 
     </ul>
     <!--end navigation-->

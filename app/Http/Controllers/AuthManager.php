@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
 
 use function Pest\Laravel\session;
 
@@ -140,18 +141,7 @@ class AuthManager extends Controller
 
     }
 
-    function logout()
-{
-    // // @phpstan-ignore-next-line
-    // session()->flush();
-
     
-    // Log out the user from the Auth system
-    Auth::logout();
-    
-    // Redirect to the login page
-    return redirect()->route('login');
-}
 
     
 

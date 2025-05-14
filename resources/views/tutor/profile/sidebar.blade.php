@@ -7,6 +7,7 @@
                     <h4>{{auth()->user()->name}}</h4>
 
                     <p class="text-muted font-size-sm">{{auth()->user()->email}}</p>
+                    
                 </div>
             </div>
             <hr class="my-4" />

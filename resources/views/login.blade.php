@@ -73,7 +73,6 @@
                                     <!-- Links for Register and Forgot Password -->
                                     <div class="mt-3 text-center">
                                         <p class="mb-1">Don't have an account? <a href="{{ route('reg') }}" class="text-primary">Register</a></p>
-                                        <p><a href="{{ route('reg.post') }}" class="text-primary">Forgot your password?</a></p>
                                     </div>
 
 
